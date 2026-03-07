@@ -1437,10 +1437,10 @@
 
 /* ===== KPI GROUP CONTAINERS ===== */
 .kpi-groups-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 24px;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 20px !important;
+  margin-bottom: 24px !important;
 }
 
 .kpi-group-container {
@@ -1467,15 +1467,15 @@
 
 /* Compact KPI Grid - Single Row (4 columns) */
 .kpi-grid-compact {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 10px !important;
 }
 
 .operational-grid-compact {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 10px !important;
 }
 
 /* Compact KPI Cards */
