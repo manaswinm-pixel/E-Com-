@@ -11,8 +11,8 @@ import NotificationContainer from './components/Notifications';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-// New OneCap Logo URL
-const LOGO_URL = "https://customer-assets.emergentagent.com/job_data-convo-poc/artifacts/fj91ntxc_Screenshot%202026-03-07%20191528.png";
+// New OneCap Logo URL - Left logo only (αOneCap)
+const LOGO_URL = "https://customer-assets.emergentagent.com/job_data-convo-poc/artifacts/1dk2nphz_image.png";
 
 function AppContent() {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);

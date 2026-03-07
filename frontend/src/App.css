@@ -43,8 +43,8 @@
 }
 
 .logo-symbol {
-  width: 42px;
-  height: 42px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1412,6 +1412,48 @@
 }
 
 .analytics-mode {
+
+/* ===== KPI GROUP CONTAINERS ===== */
+.kpi-group-container {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.kpi-group-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.kpi-group-container .metrics-grid {
+  margin-bottom: 0;
+}
+
+/* ===== CLICKABLE STATUS INDICATORS ===== */
+.status-indicator.clickable {
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.status-indicator.clickable:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  filter: brightness(0.95);
+}
+
+.status-indicator.clickable:active {
+  transform: scale(0.98);
+}
+
   flex: 1;
   display: flex;
   align-items: center;

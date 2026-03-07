@@ -21,14 +21,17 @@ const DataPage = ({ addNotification }) => {
   const dates = generateDates();
 
   const dataSourcesConfig = [
-    { name: 'UNICOM - Invoice Report', key: 'unicom-invoice' },
-    { name: 'UNICOM - Report', key: 'unicom-report' },
-    { name: 'Shopify - Order Report', key: 'shopify-order' },
-    { name: 'Shopify - Gift Card Report', key: 'shopify-giftcard' },
-    { name: 'Razorpay Report', key: 'razorpay' },
-    { name: 'Bluedart Logistics', key: 'bluedart' },
-    { name: 'Delhivery Logistics', key: 'delhivery' },
+    { name: 'UNICOM - Invoice Report', key: 'unicom-invoice', url: 'https://unicom.example.com/invoices' },
+    { name: 'UNICOM - Report', key: 'unicom-report', url: 'https://unicom.example.com/reports' },
+    { name: 'Shopify - Order Report', key: 'shopify-order', url: 'https://shopify.com/admin/orders' },
+    { name: 'Shopify - Gift Card Report', key: 'shopify-giftcard', url: 'https://shopify.com/admin/gift_cards' },
+    { name: 'Razorpay Report', key: 'razorpay', url: 'https://dashboard.razorpay.com/app/transactions' },
+    { name: 'Bluedart Logistics', key: 'bluedart', url: 'https://www.bluedart.com/tracking' },
+    { name: 'Delhivery Logistics', key: 'delhivery', url: 'https://www.delhivery.com/track' },
   ];
+
+  // Track clicks for double-click detection
+  const [clickTimers, setClickTimers] = useState({});
 
   // Generate status: only Success and Queued, 3-4 items queued
   const generateStatus = () => {
@@ -52,6 +55,40 @@ const DataPage = ({ addNotification }) => {
   };
 
   const [syncData, setSyncData] = useState(generateStatus());
+
+  const handleStatusClick = (date, sourceKey, url) => {
+    const clickKey = `${date}-${sourceKey}`;
+    
+    // If there's already a timer, it's a double click
+    if (clickTimers[clickKey]) {
+      clearTimeout(clickTimers[clickKey]);
+      setClickTimers((prev) => {
+        const newTimers = { ...prev };
+        delete newTimers[clickKey];
+        return newTimers;
+      });
+      
+      // Double click - open URL
+      window.open(url, '_blank');
+    } else {
+      // Single click - show notification and set timer
+      addNotification({
+        type: 'info',
+        title: 'Agent Re-Initiated',
+        message: `Re-initiating data fetch for ${sourceKey} on ${date}`,
+      });
+      
+      const timer = setTimeout(() => {
+        setClickTimers((prev) => {
+          const newTimers = { ...prev };
+          delete newTimers[clickKey];
+          return newTimers;
+        });
+      }, 300); // 300ms window for double click
+      
+      setClickTimers((prev) => ({ ...prev, [clickKey]: timer }));
+    }
+  };
 
   const handleDailySync = () => {
     setSyncing(true);
@@ -166,15 +203,17 @@ const DataPage = ({ addNotification }) => {
                     const statusConfig = getStatusDisplay(status);
                     return (
                       <td key={source.key} className="status-cell">
-                        <div
-                          className="status-indicator"
+                        <button
+                          className="status-indicator clickable"
                           style={{
                             backgroundColor: statusConfig.color,
                             color: statusConfig.textColor,
                           }}
+                          onClick={() => handleStatusClick(dateObj.date, source.key, source.url)}
+                          title="Single click: Re-initiate | Double click: Open website"
                         >
                           {statusConfig.text}
-                        </div>
+                        </button>
                       </td>
                     );
                   })}
