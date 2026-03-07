@@ -96,84 +96,87 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* KPI Cards - First Group (Big Box with 4 cards inside) */}
-      <div className="kpi-group-container" data-testid="kpi-group-1">
-        <h3 className="kpi-group-title">Key Performance Indicators</h3>
-        <div className="metrics-grid kpi-grid" data-testid="kpi-cards">
-          <div className="metric-card kpi-card">
-            <div className="metric-header">
-              <Package className="metric-icon info" size={24} />
-              <span className="metric-trend positive">
-                <TrendingUp size={16} /> +15.3%
-              </span>
+      {/* KPI Groups Container - Side by Side */}
+      <div className="kpi-groups-row" data-testid="kpi-groups-row">
+        {/* Left Group - Key Performance Indicators */}
+        <div className="kpi-group-container" data-testid="kpi-group-1">
+          <h3 className="kpi-group-title">Key Performance Indicators</h3>
+          <div className="metrics-grid kpi-grid-compact" data-testid="kpi-cards">
+            <div className="metric-card kpi-card-compact">
+              <div className="metric-header">
+                <Package className="metric-icon info" size={20} />
+                <span className="metric-trend positive">
+                  <TrendingUp size={14} /> +15.3%
+                </span>
+              </div>
+              <h3 className="metric-title">Total Orders Processed</h3>
+              <p className="metric-value">12,456</p>
+              <p className="metric-subtitle">This month</p>
             </div>
-            <h3 className="metric-title">Total Orders Processed</h3>
-            <p className="metric-value">12,456</p>
-            <p className="metric-subtitle">This month</p>
-          </div>
 
-          <div className="metric-card kpi-card">
-            <div className="metric-header">
-              <DollarSign className="metric-icon success" size={24} />
-              <span className="metric-trend positive">
-                <TrendingUp size={16} /> +12.8%
-              </span>
+            <div className="metric-card kpi-card-compact">
+              <div className="metric-header">
+                <DollarSign className="metric-icon success" size={20} />
+                <span className="metric-trend positive">
+                  <TrendingUp size={14} /> +12.8%
+                </span>
+              </div>
+              <h3 className="metric-title">Total Sales Amount</h3>
+              <p className="metric-value">₹856.5 Cr</p>
+              <p className="metric-subtitle">Last 30 days</p>
             </div>
-            <h3 className="metric-title">Total Sales Amount</h3>
-            <p className="metric-value">₹856.5 Cr</p>
-            <p className="metric-subtitle">Last 30 days</p>
-          </div>
 
-          <div className="metric-card kpi-card">
-            <div className="metric-header">
-              <CheckCircle className="metric-icon success" size={24} />
-              <span className="metric-trend positive">
-                <TrendingUp size={16} /> +8.5%
-              </span>
+            <div className="metric-card kpi-card-compact">
+              <div className="metric-header">
+                <CheckCircle className="metric-icon success" size={20} />
+                <span className="metric-trend positive">
+                  <TrendingUp size={14} /> +8.5%
+                </span>
+              </div>
+              <h3 className="metric-title">Total Settled Amount</h3>
+              <p className="metric-value">₹724.2 Cr</p>
+              <p className="metric-subtitle">84.6% of sales</p>
             </div>
-            <h3 className="metric-title">Total Settled Amount</h3>
-            <p className="metric-value">₹724.2 Cr</p>
-            <p className="metric-subtitle">84.6% of sales</p>
-          </div>
 
-          <div className="metric-card kpi-card">
-            <div className="metric-header">
-              <AlertTriangle className="metric-icon warning" size={24} />
-              <span className="metric-trend neutral">+2.1%</span>
+            <div className="metric-card kpi-card-compact">
+              <div className="metric-header">
+                <AlertTriangle className="metric-icon warning" size={20} />
+                <span className="metric-trend neutral">+2.1%</span>
+              </div>
+              <h3 className="metric-title">Total Pending Amount</h3>
+              <p className="metric-value">₹132.3 Cr</p>
+              <p className="metric-subtitle">Requires attention</p>
             </div>
-            <h3 className="metric-title">Total Pending Amount</h3>
-            <p className="metric-value">₹132.3 Cr</p>
-            <p className="metric-subtitle">Requires attention</p>
           </div>
         </div>
-      </div>
 
-      {/* Operational Metrics - Second Group (Big Box with 4 cards inside) */}
-      <div className="kpi-group-container" data-testid="kpi-group-2">
-        <h3 className="kpi-group-title">Operational Metrics</h3>
-        <div className="metrics-grid operational-grid">
-          <div className="metric-card operational-card">
-            <h3 className="metric-title">COD Pending Deposit</h3>
-            <p className="metric-value operational-value">₹45.8 Cr</p>
-            <span className="status-badge pending">235 orders</span>
-          </div>
+        {/* Right Group - Operational Metrics */}
+        <div className="kpi-group-container" data-testid="kpi-group-2">
+          <h3 className="kpi-group-title">Operational Metrics</h3>
+          <div className="metrics-grid operational-grid-compact">
+            <div className="metric-card operational-card-compact">
+              <h3 className="metric-title">COD Pending Deposit</h3>
+              <p className="metric-value operational-value">₹45.8 Cr</p>
+              <span className="status-badge pending">235 orders</span>
+            </div>
 
-          <div className="metric-card operational-card">
-            <h3 className="metric-title">Razorpay Settlement Pending</h3>
-            <p className="metric-value operational-value">₹68.5 Cr</p>
-            <span className="status-badge queued">T+2 settlement</span>
-          </div>
+            <div className="metric-card operational-card-compact">
+              <h3 className="metric-title">Razorpay Settlement Pending</h3>
+              <p className="metric-value operational-value">₹68.5 Cr</p>
+              <span className="status-badge queued">T+2 settlement</span>
+            </div>
 
-          <div className="metric-card operational-card">
-            <h3 className="metric-title">Returns Value</h3>
-            <p className="metric-value operational-value">₹18.0 Cr</p>
-            <span className="status-badge matched">2.1% of sales</span>
-          </div>
+            <div className="metric-card operational-card-compact">
+              <h3 className="metric-title">Returns Value</h3>
+              <p className="metric-value operational-value">₹18.0 Cr</p>
+              <span className="status-badge matched">2.1% of sales</span>
+            </div>
 
-          <div className="metric-card operational-card">
-            <h3 className="metric-title">Reconciliation Accuracy</h3>
-            <p className="metric-value operational-value">97.8%</p>
-            <span className="status-badge matched">+0.5% vs last month</span>
+            <div className="metric-card operational-card-compact">
+              <h3 className="metric-title">Reconciliation Accuracy</h3>
+              <p className="metric-value operational-value">97.8%</p>
+              <span className="status-badge matched">+0.5% vs last month</span>
+            </div>
           </div>
         </div>
       </div>
