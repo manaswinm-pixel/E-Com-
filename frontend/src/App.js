@@ -11,8 +11,8 @@ import NotificationContainer from './components/Notifications';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-// New OneCap Logo URL - Left logo only (αOneCap)
-const LOGO_URL = "https://customer-assets.emergentagent.com/job_data-convo-poc/artifacts/1dk2nphz_image.png";
+// OneCap Logo URL - Complete logo with α symbol
+const LOGO_URL = "https://customer-assets.emergentagent.com/job_data-convo-poc/artifacts/jyutwofh_Screenshot%202026-03-07%20233634.png";
 
 function AppContent() {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
@@ -56,16 +56,13 @@ function AppContent() {
         onMouseLeave={() => setSidebarExpanded(false)}
         data-testid="sidebar"
       >
-        {/* Logo - New OneCap design */}
+        {/* Logo - Complete OneCap logo with α symbol */}
         <Link to="/" className="logo-container-new" data-testid="logo-container">
-          <div className="logo-symbol">
-            <img 
-              src={LOGO_URL} 
-              alt="OneCap Logo" 
-              className="logo-symbol-image"
-            />
-          </div>
-          {sidebarExpanded && <span className="logo-text-new">OneCap</span>}
+          <img 
+            src={LOGO_URL} 
+            alt="OneCap Logo" 
+            className="logo-full-image"
+          />
         </Link>
 
         {/* Navigation */}

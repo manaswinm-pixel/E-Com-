@@ -31,39 +31,30 @@
   padding: 24px 16px;
 }
 
-/* New Logo Design */
+/* New Logo Design - Complete logo */
 .logo-container-new {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
   margin-bottom: 32px;
-  padding: 0 4px;
+  padding: 8px;
   text-decoration: none;
   transition: all 0.3s ease;
 }
 
-.logo-symbol {
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.logo-symbol-image {
-  width: 100%;
-  height: 100%;
+.logo-full-image {
+  width: auto;
+  height: 45px;
   object-fit: contain;
+  transition: all 0.3s ease;
 }
 
-.logo-text-new {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1e40af;
-  white-space: nowrap;
-  opacity: 0;
-  animation: fadeIn 0.3s ease forwards;
+.sidebar.collapsed .logo-full-image {
+  height: 35px;
+}
+
+.sidebar.expanded .logo-full-image {
+  height: 50px;
 }
 
 @keyframes fadeIn {
@@ -1131,7 +1122,7 @@
 }
 
 .dashboard-header-logo {
-  height: 50px;
+  height: 55px;
   width: auto;
   object-fit: contain;
 }
