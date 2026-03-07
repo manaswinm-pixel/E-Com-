@@ -1124,6 +1124,18 @@
   position: relative;
 }
 
+.header-logo-and-title {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.dashboard-header-logo {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+}
+
 .recon-type-dropdown {
   position: relative;
 }
@@ -1453,17 +1465,17 @@
   margin-bottom: 0;
 }
 
-/* Compact KPI Grid */
+/* Compact KPI Grid - Single Row (4 columns) */
 .kpi-grid-compact {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
 }
 
 .operational-grid-compact {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
 }
 
 /* Compact KPI Cards */
@@ -1584,6 +1596,11 @@
   .kpi-groups-row {
     grid-template-columns: 1fr;
   }
+  
+  .kpi-grid-compact,
+  .operational-grid-compact {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 1024px) {
@@ -1602,6 +1619,13 @@
   .kpi-grid-compact,
   .operational-grid-compact {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .kpi-grid-compact,
+  .operational-grid-compact {
+    grid-template-columns: 1fr;
   }
 }
 

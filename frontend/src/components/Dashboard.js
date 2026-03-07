@@ -66,33 +66,40 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-content" data-testid="dashboard-page">
-      {/* Header with Dropdown */}
+      {/* Header with Dropdown and Logo */}
       <header className="dashboard-header-with-dropdown">
-        <div className="recon-type-dropdown">
-          <button
-            className="dropdown-trigger"
-            onClick={() => setShowDropdown(!showDropdown)}
-            data-testid="recon-type-dropdown"
-          >
-            <h1 className="dashboard-title">{reconType}</h1>
-            <ChevronDown size={24} className={showDropdown ? 'rotated' : ''} />
-          </button>
-          {showDropdown && (
-            <div className="dropdown-menu">
-              {reconTypes.map((type) => (
-                <div
-                  key={type}
-                  className={`dropdown-item ${reconType === type ? 'active' : ''}`}
-                  onClick={() => {
-                    setReconType(type);
-                    setShowDropdown(false);
-                  }}
-                >
-                  {type}
-                </div>
-              ))}
-            </div>
-          )}
+        <div className="header-logo-and-title">
+          <img 
+            src="https://customer-assets.emergentagent.com/job_data-convo-poc/artifacts/7wft7zmj_image.png" 
+            alt="OneCap Logo" 
+            className="dashboard-header-logo"
+          />
+          <div className="recon-type-dropdown">
+            <button
+              className="dropdown-trigger"
+              onClick={() => setShowDropdown(!showDropdown)}
+              data-testid="recon-type-dropdown"
+            >
+              <h1 className="dashboard-title">{reconType}</h1>
+              <ChevronDown size={24} className={showDropdown ? 'rotated' : ''} />
+            </button>
+            {showDropdown && (
+              <div className="dropdown-menu">
+                {reconTypes.map((type) => (
+                  <div
+                    key={type}
+                    className={`dropdown-item ${reconType === type ? 'active' : ''}`}
+                    onClick={() => {
+                      setReconType(type);
+                      setShowDropdown(false);
+                    }}
+                  >
+                    {type}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
