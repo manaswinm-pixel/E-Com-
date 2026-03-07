@@ -1,26 +1,54 @@
 import { useState } from "react";
 import "@/App.css";
-import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Database, MessageSquare, Shield, ChevronDown } from 'lucide-react';
+import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
+import { LayoutDashboard, Database, MessageSquare, Shield, ChevronDown, Settings as SettingsIcon, LogOut } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import DataPage from './components/DataPage';
 import ConversationalInsights from './components/ConversationalInsights';
+import Settings from './components/Settings';
+import NotificationContainer from './components/Notifications';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-// Logo URL from uploaded image
-const LOGO_URL = "https://customer-assets.emergentagent.com/job_data-convo-poc/artifacts/zs9efu6h_image.png";
+// New OneCap Logo URL
+const LOGO_URL = "https://customer-assets.emergentagent.com/job_data-convo-poc/artifacts/fj91ntxc_Screenshot%202026-03-07%20191528.png";
 
 function AppContent() {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [adminPortalOpen, setAdminPortalOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isActive = (path) => location.pathname === path;
 
+  const addNotification = (notification) => {
+    const id = Date.now();
+    setNotifications((prev) => [...prev, { ...notification, id }]);
+  };
+
+  const removeNotification = (id) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  };
+
+  const handleLogout = () => {
+    addNotification({
+      type: 'info',
+      title: 'Logged Out',
+      message: 'You have been successfully logged out.',
+    });
+    // Simulate logout
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  };
+
   return (
     <div className="dashboard-container" data-testid="app-container">
+      {/* Notification Container */}
+      <NotificationContainer notifications={notifications} onClose={removeNotification} />
+
       {/* Collapsible Sidebar */}
       <aside 
         className={`sidebar ${sidebarExpanded ? 'expanded' : 'collapsed'}`}
@@ -28,14 +56,16 @@ function AppContent() {
         onMouseLeave={() => setSidebarExpanded(false)}
         data-testid="sidebar"
       >
-        {/* Logo */}
-        <Link to="/" className="logo-container" data-testid="logo-container">
-          <img 
-            src={LOGO_URL} 
-            alt="OneCap Logo" 
-            className="logo-image"
-          />
-          {sidebarExpanded && <span className="logo-text">OneCap</span>}
+        {/* Logo - New OneCap design */}
+        <Link to="/" className="logo-container-new" data-testid="logo-container">
+          <div className="logo-symbol">
+            <img 
+              src={LOGO_URL} 
+              alt="OneCap Logo" 
+              className="logo-symbol-image"
+            />
+          </div>
+          {sidebarExpanded && <span className="logo-text-new">OneCap</span>}
         </Link>
 
         {/* Navigation */}
@@ -84,14 +114,36 @@ function AppContent() {
             )}
           </div>
         </nav>
+
+        {/* Bottom Navigation - Settings & Logout */}
+        <div className="nav-bottom">
+          <Link 
+            to="/settings" 
+            className={`nav-item ${isActive('/settings') ? 'active' : ''}`}
+            data-testid="nav-settings"
+          >
+            <SettingsIcon size={20} />
+            {sidebarExpanded && <span>Settings</span>}
+          </Link>
+          
+          <div 
+            className="nav-item logout" 
+            onClick={handleLogout}
+            data-testid="nav-logout"
+          >
+            <LogOut size={20} />
+            {sidebarExpanded && <span>Logout</span>}
+          </div>
+        </div>
       </aside>
 
       {/* Main Content */}
       <main className={`main-content ${sidebarExpanded ? 'sidebar-expanded' : 'sidebar-collapsed'}`} data-testid="main-content">
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          <Route path="/data" element={<DataPage />} />
+          <Route path="/data" element={<DataPage addNotification={addNotification} />} />
           <Route path="/conversational-insights" element={<ConversationalInsights />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>
     </div>

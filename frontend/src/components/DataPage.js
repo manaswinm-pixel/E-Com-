@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Download, Play, RefreshCw } from 'lucide-react';
 
-const DataPage = () => {
+const DataPage = ({ addNotification }) => {
   const [syncing, setSyncing] = useState(false);
 
   // Generate dates for the last 7 days
@@ -10,7 +10,10 @@ const DataPage = () => {
     for (let i = 6; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
-      dates.push(date.toISOString().split('T')[0]);
+      dates.push({
+        date: date.toISOString().split('T')[0],
+        display: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      });
     }
     return dates;
   };
@@ -27,65 +30,102 @@ const DataPage = () => {
     { name: 'Delhivery Logistics', key: 'delhivery' },
   ];
 
-  // Generate random status for demo
-  const getRandomStatus = () => {
-    const statuses = ['success', 'queued', 'failed'];
-    return statuses[Math.floor(Math.random() * statuses.length)];
-  };
-
-  // Generate mock data
-  const generateMockData = () => {
+  // Generate status: only Success and Queued, 3-4 items queued
+  const generateStatus = () => {
+    const totalItems = dates.length * dataSourcesConfig.length;
+    const queuedCount = 3 + Math.floor(Math.random() * 2); // 3 or 4 items queued
+    const queuedIndices = new Set();
+    
+    while (queuedIndices.size < queuedCount) {
+      queuedIndices.add(Math.floor(Math.random() * totalItems));
+    }
+    
     const data = {};
-    dataSourcesConfig.forEach((source) => {
-      data[source.key] = {};
-      dates.forEach((date) => {
-        data[source.key][date] = getRandomStatus();
+    dates.forEach((date, dateIdx) => {
+      data[date.date] = {};
+      dataSourcesConfig.forEach((source, sourceIdx) => {
+        const idx = dateIdx * dataSourcesConfig.length + sourceIdx;
+        data[date.date][source.key] = queuedIndices.has(idx) ? 'queued' : 'success';
       });
     });
     return data;
   };
 
-  const [syncData, setSyncData] = useState(generateMockData());
+  const [syncData, setSyncData] = useState(generateStatus());
 
   const handleDailySync = () => {
     setSyncing(true);
+    addNotification({
+      type: 'info',
+      title: 'Sync Started',
+      message: 'Daily data sync is in progress...',
+    });
+    
     setTimeout(() => {
-      setSyncData(generateMockData());
+      setSyncData(generateStatus());
       setSyncing(false);
-    }, 1500);
+      addNotification({
+        type: 'success',
+        title: 'Sync Complete',
+        message: 'All data sources have been synchronized successfully.',
+      });
+    }, 2000);
   };
 
   const handleDownload = (date) => {
-    // Create a simple CSV content
-    let csvContent = 'Data Source,Status\n';
-    dataSourcesConfig.forEach((source) => {
-      const status = syncData[source.key][date];
-      csvContent += `${source.name},${status}\n`;
+    addNotification({
+      type: 'info',
+      title: 'Download Started',
+      message: `Preparing data for ${date}...`,
     });
 
-    // Create blob and download
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `recon-data-${date}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
+    setTimeout(() => {
+      let csvContent = 'Data Source,Status\\n';
+      dataSourcesConfig.forEach((source) => {
+        const status = syncData[date][source.key];
+        csvContent += `${source.name},${status}\\n`;
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `recon-data-${date}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
+      addNotification({
+        type: 'success',
+        title: 'Data Downloaded',
+        message: `Successfully downloaded data for ${date}`,
+      });
+    }, 500);
   };
 
   const handleQuickRecon = (date) => {
-    alert(`Initiating quick reconciliation for ${date}...`);
+    addNotification({
+      type: 'info',
+      title: 'Job Started',
+      message: `Quick reconciliation initiated for ${date}`,
+    });
+
+    setTimeout(() => {
+      addNotification({
+        type: 'success',
+        title: 'Job Done',
+        message: `Reconciliation completed for ${date}. 156 records processed.`,
+      });
+    }, 3000);
   };
 
   const getStatusDisplay = (status) => {
     const config = {
       success: { text: 'Success', color: '#d1fae5', textColor: '#065f46' },
       queued: { text: 'Queued', color: '#fef3c7', textColor: '#92400e' },
-      failed: { text: 'Failed', color: '#fee2e2', textColor: '#991b1b' },
     };
-    return config[status] || config.queued;
+    return config[status];
   };
 
   return (
@@ -103,30 +143,29 @@ const DataPage = () => {
         </button>
       </header>
 
-      <div className="data-sync-table-container">
+      <div className="data-sync-table-container flipped-layout">
         <div className="table-wrapper data-sync-wrapper">
-          <table className="data-sync-table">
+          <table className="data-sync-table flipped">
             <thead>
               <tr>
-                <th className="sticky-col">Data Source</th>
-                {dates.map((date) => (
-                  <th key={date} className="date-col">
-                    <div className="date-header">
-                      {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </div>
+                <th className="sticky-col date-col-header">Date</th>
+                {dataSourcesConfig.map((source) => (
+                  <th key={source.key} className="source-col-header">
+                    {source.name}
                   </th>
                 ))}
+                <th className="action-col-header">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {dataSourcesConfig.map((source) => (
-                <tr key={source.key}>
-                  <td className="sticky-col source-name">{source.name}</td>
-                  {dates.map((date) => {
-                    const status = syncData[source.key][date];
+              {dates.map((dateObj) => (
+                <tr key={dateObj.date}>
+                  <td className="sticky-col date-cell">{dateObj.display}</td>
+                  {dataSourcesConfig.map((source) => {
+                    const status = syncData[dateObj.date][source.key];
                     const statusConfig = getStatusDisplay(status);
                     return (
-                      <td key={date} className="status-cell">
+                      <td key={source.key} className="status-cell">
                         <div
                           className="status-indicator"
                           style={{
@@ -139,34 +178,28 @@ const DataPage = () => {
                       </td>
                     );
                   })}
-                </tr>
-              ))}
-              {/* Action Row */}
-              <tr className="action-row">
-                <td className="sticky-col">Actions</td>
-                {dates.map((date) => (
-                  <td key={date} className="action-cell">
+                  <td className="action-cell">
                     <div className="action-buttons">
                       <button
                         className="icon-button download-btn"
-                        onClick={() => handleDownload(date)}
+                        onClick={() => handleDownload(dateObj.date)}
                         title="Download data"
-                        data-testid={`download-${date}`}
+                        data-testid={`download-${dateObj.date}`}
                       >
                         <Download size={16} />
                       </button>
                       <button
                         className="icon-button recon-btn"
-                        onClick={() => handleQuickRecon(date)}
+                        onClick={() => handleQuickRecon(dateObj.date)}
                         title="Quick Recon"
-                        data-testid={`quick-recon-${date}`}
+                        data-testid={`quick-recon-${dateObj.date}`}
                       >
                         <Play size={16} />
                       </button>
                     </div>
                   </td>
-                ))}
-              </tr>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
