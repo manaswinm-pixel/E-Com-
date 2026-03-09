@@ -2,6 +2,41 @@ import { useState, useRef, useEffect } from 'react';
 import { Send, Star, TrendingUp, ThumbsUp, ThumbsDown, Copy, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+// Real data from Excel (in rupees, not lakhs)
+const salesData = [
+  { date: '02.02.2026', totalSales: 336575.60, cod: 53529.10, razorpayCommission: 3344.75, razorpaySettlement: 3024.19, directCollection: null, giftCard: null, rto: 18996.50, exchange: 6594.00, balance: 0.00 },
+  { date: '03.02.2026', totalSales: 250645.90, cod: 74295.50, razorpayCommission: 1909.25, razorpaySettlement: 1682.75, directCollection: null, giftCard: null, rto: 19812.00, exchange: 7126.00, balance: 0.00 },
+  { date: '04.02.2026', totalSales: 171281.80, cod: 29218.00, razorpayCommission: 1633.50, razorpaySettlement: 1207.79, directCollection: null, giftCard: null, rto: 15184.00, exchange: 2977.00, balance: 1408.00 },
+  { date: '05.02.2026', totalSales: 206385.20, cod: 45662.00, razorpayCommission: 1501.50, razorpaySettlement: 1356.20, directCollection: null, giftCard: null, rto: 17084.00, exchange: 2196.00, balance: 9951.00 },
+  { date: '06.02.2026', totalSales: 179363.60, cod: 23756.00, razorpayCommission: 754.50, razorpaySettlement: 1074.20, directCollection: null, giftCard: null, rto: 23711.80, exchange: 7088.00, balance: 15237.00 },
+  { date: '07.02.2026', totalSales: 232152.40, cod: 57809.60, razorpayCommission: 1195.50, razorpaySettlement: 1474.70, directCollection: 980.00, giftCard: null, rto: 16501.80, exchange: 7457.00, balance: 28351.60 },
+  { date: '09.02.2026', totalSales: 445388.70, cod: 93559.60, razorpayCommission: 4409.25, razorpaySettlement: 3243.35, directCollection: null, giftCard: null, rto: 4394.00, exchange: 4598.00, balance: 10404.00 },
+  { date: '10.02.2026', totalSales: 151241.80, cod: 40854.99, razorpayCommission: 935.07, razorpaySettlement: 873.06, directCollection: null, giftCard: null, rto: 15939.00, exchange: 1795.00, balance: 4994.10 },
+  { date: '11.02.2026', totalSales: 249254.60, cod: 50282.00, razorpayCommission: 1591.10, razorpaySettlement: 1683.40, directCollection: 800.00, giftCard: 2588.00, rto: 10493.00, exchange: 6485.00, balance: 8686.90 },
+  { date: '12.02.2026', totalSales: 393021.70, cod: 78683.40, razorpayCommission: 3235.75, razorpaySettlement: 2654.90, directCollection: null, giftCard: null, rto: 15931.80, exchange: 8502.00, balance: 21626.10 },
+  { date: '13.02.2026', totalSales: 262450.00, cod: 58943.40, razorpayCommission: 2028.75, razorpaySettlement: 1855.70, directCollection: null, giftCard: 3999.00, rto: 8407.00, exchange: 2398.00, balance: 1148.00 },
+  { date: '14.02.2026', totalSales: 312185.70, cod: 95078.00, razorpayCommission: 2835.75, razorpaySettlement: 2497.50, directCollection: null, giftCard: null, rto: 9642.00, exchange: 14094.00, balance: 50564.10 },
+  { date: '16.02.2026', totalSales: 706162.00, cod: 3187.00, razorpayCommission: 7016.50, razorpaySettlement: 6285.30, directCollection: null, giftCard: null, rto: null, exchange: null, balance: 69598.00 },
+  { date: '17.02.2026', totalSales: 428785.00, cod: 12535.00, razorpayCommission: 2187.50, razorpaySettlement: 1864.10, directCollection: null, giftCard: null, rto: null, exchange: 10692.00, balance: 11774.60 },
+  { date: '18.02.2026', totalSales: 245190.00, cod: null, razorpayCommission: 1547.50, razorpaySettlement: 1533.30, directCollection: null, giftCard: null, rto: null, exchange: 1495.00, balance: 89337.30 },
+  { date: '19.02.2026', totalSales: 204810.00, cod: null, razorpayCommission: 1543.50, razorpaySettlement: 1397.80, directCollection: null, giftCard: null, rto: null, exchange: 7275.00, balance: 55812.00 },
+  { date: '20.02.2026', totalSales: 247498.00, cod: null, razorpayCommission: 1526.00, razorpaySettlement: 1790.40, directCollection: null, giftCard: null, rto: null, exchange: 7395.00, balance: 60328.00 },
+  { date: '21.02.2026', totalSales: 277704.70, cod: null, razorpayCommission: 1597.40, razorpaySettlement: 1910.60, directCollection: null, giftCard: null, rto: null, exchange: null, balance: 83846.40 },
+  { date: '23.02.2026', totalSales: 528383.50, cod: null, razorpayCommission: 2878.50, razorpaySettlement: 2353.60, directCollection: null, giftCard: null, rto: null, exchange: 2598.00, balance: 199519.00 },
+  { date: '24.02.2026', totalSales: 268605.00, cod: null, razorpayCommission: 613.00, razorpaySettlement: 613.10, directCollection: null, giftCard: null, rto: null, exchange: 2744.00, balance: 198642.50 },
+];
+
+// Helper function to format currency in Indian style
+const formatCurrency = (num) => {
+  if (num === null || num === undefined) return '-';
+  return `₹${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num)}`;
+};
+
+const formatLakhs = (num) => {
+  if (num === null || num === undefined) return '-';
+  return `₹${(num / 100000).toFixed(2)}L`;
+};
+
 const ConversationalInsights = () => {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
@@ -25,45 +60,48 @@ const ConversationalInsights = () => {
     'What is the outstanding balance status?'
   ];
 
+  // Calculate totals from real data
+  const totalSales = salesData.reduce((sum, day) => sum + (day.totalSales || 0), 0);
+  const totalCOD = salesData.reduce((sum, day) => sum + (day.cod || 0), 0);
+  const totalRazorpaySettlement = salesData.reduce((sum, day) => sum + (day.razorpaySettlement || 0), 0);
+  const totalRazorpayCommission = salesData.reduce((sum, day) => sum + (day.razorpayCommission || 0), 0);
+  const totalRTO = salesData.reduce((sum, day) => sum + (day.rto || 0), 0);
+  const totalExchange = salesData.reduce((sum, day) => sum + (day.exchange || 0), 0);
+  const totalBalance = salesData.reduce((sum, day) => sum + (day.balance || 0), 0);
+  const totalDirectCollection = salesData.reduce((sum, day) => sum + (day.directCollection || 0), 0);
+  const totalGiftCard = salesData.reduce((sum, day) => sum + (day.giftCard || 0), 0);
+
+  const avgDailySales = totalSales / salesData.length;
+  const highestSalesDay = salesData.reduce((max, day) => day.totalSales > (max.totalSales || 0) ? day : max, salesData[0]);
+
   const mockResponses = {
     'What was total sales for February 2026?': {
       title: 'Total Sales Analysis - February 2026',
-      description: 'Here is a comprehensive breakdown of daily sales for May-bell Data in February 2026:',
-      tableData: [
-        { date: '02.02.2026', totalSales: 3.85, cod: 53.52, razorpaySett: 3.02, rto: 18.99, exchange: 6.30, balance: 0 },
-        { date: '03.02.2026', totalSales: 2.50, cod: 74.30, razorpaySett: 1.46, rto: 19.81, exchange: 7.20, balance: 0 },
-        { date: '04.02.2026', totalSales: 1.71, cod: 29.22, razorpaySett: 1.21, rto: 15.18, exchange: 2.98, balance: 1.50 },
-        { date: '05.02.2026', totalSales: 2.06, cod: 45.66, razorpaySett: 1.34, rto: 17.08, exchange: 2.20, balance: 5.40 },
-        { date: '06.02.2026', totalSales: 1.79, cod: 23.76, razorpaySett: 1.08, rto: 23.71, exchange: 7.10, balance: 15.24 },
-        { date: '07.02.2026', totalSales: 2.32, cod: 57.81, razorpaySett: 1.19, rto: 16.50, exchange: 7.46, balance: 28.82 },
-        { date: '09.02.2026', totalSales: 4.45, cod: 93.59, razorpaySett: 3.24, rto: 4.39, exchange: 4.60, balance: 14.04 },
-        { date: '10.02.2026', totalSales: 1.52, cod: 40.85, razorpaySett: 0.87, rto: 15.94, exchange: 1.80, balance: 4.99 },
-        { date: '11.02.2026', totalSales: 2.49, cod: 50.28, razorpaySett: 1.68, rto: 10.49, exchange: 6.50, balance: 8.69 },
-        { date: '12.02.2026', totalSales: 3.93, cod: 78.68, razorpaySett: 2.65, rto: 15.93, exchange: 8.50, balance: 21.63 },
-      ],
-      chartData: [
-        { date: '02.02', value: 3.85 },
-        { date: '03.02', value: 2.50 },
-        { date: '04.02', value: 1.71 },
-        { date: '05.02', value: 2.06 },
-        { date: '06.02', value: 1.79 },
-        { date: '07.02', value: 2.32 },
-        { date: '09.02', value: 4.45 },
-        { date: '10.02', value: 1.52 },
-        { date: '11.02', value: 2.49 },
-        { date: '12.02', value: 3.93 },
-      ],
+      description: 'Here is a comprehensive breakdown of daily sales for February 2026 with exact values:',
+      tableData: salesData.map(day => ({
+        date: day.date,
+        totalSales: formatCurrency(day.totalSales),
+        cod: formatCurrency(day.cod),
+        razorpaySett: formatCurrency(day.razorpaySettlement),
+        rto: formatCurrency(day.rto),
+        exchange: formatCurrency(day.exchange),
+        balance: formatCurrency(day.balance)
+      })),
+      chartData: salesData.map(day => ({
+        date: day.date.substring(0, 5),
+        value: (day.totalSales / 100000)
+      })),
       keyInsights: [
-        'Total sales for February 2026 amounted to ₹60.85L across 17 business days.',
-        'Highest sales day was February 16th with ₹7.06L in sales.',
-        'Average daily sales: ₹2.97L, showing consistent business performance.',
-        'Week 2 (Feb 9-14) showed strongest performance with peak sales activity.'
+        `Total sales for February 2026: ${formatLakhs(totalSales)} across ${salesData.length} business days.`,
+        `Highest sales day was ${highestSalesDay.date} with ${formatLakhs(highestSalesDay.totalSales)} in sales.`,
+        `Average daily sales: ${formatLakhs(avgDailySales)}, showing business performance.`,
+        `Total COD collections: ${formatLakhs(totalCOD)} | Razorpay settlements: ${formatLakhs(totalRazorpaySettlement)}`
       ],
       explanation: {
         title: 'Sales Calculation Methodology',
         points: [
           'Total Sales represents the gross revenue generated from all orders placed on that date.',
-          'Excludes weekends (Feb 1, 8, 15) where no business operations occurred.',
+          'Values shown are exact amounts from the reconciliation data in Indian Rupees.',
           'Includes all payment modes: COD, Razorpay, Direct Collection, and Gift Cards.'
         ]
       },
@@ -75,41 +113,30 @@ const ConversationalInsights = () => {
     },
     '★ Total Sales Analysis': {
       title: 'Total Sales Analysis - February 2026',
-      description: 'Here is a comprehensive breakdown of daily sales for May-bell Data in February 2026:',
-      tableData: [
-        { date: '02.02.2026', totalSales: 3.85, cod: 53.52, razorpaySett: 3.02, rto: 18.99, exchange: 6.30, balance: 0 },
-        { date: '03.02.2026', totalSales: 2.50, cod: 74.30, razorpaySett: 1.46, rto: 19.81, exchange: 7.20, balance: 0 },
-        { date: '04.02.2026', totalSales: 1.71, cod: 29.22, razorpaySett: 1.21, rto: 15.18, exchange: 2.98, balance: 1.50 },
-        { date: '05.02.2026', totalSales: 2.06, cod: 45.66, razorpaySett: 1.34, rto: 17.08, exchange: 2.20, balance: 5.40 },
-        { date: '06.02.2026', totalSales: 1.79, cod: 23.76, razorpaySett: 1.08, rto: 23.71, exchange: 7.10, balance: 15.24 },
-        { date: '07.02.2026', totalSales: 2.32, cod: 57.81, razorpaySett: 1.19, rto: 16.50, exchange: 7.46, balance: 28.82 },
-        { date: '09.02.2026', totalSales: 4.45, cod: 93.59, razorpaySett: 3.24, rto: 4.39, exchange: 4.60, balance: 14.04 },
-        { date: '10.02.2026', totalSales: 1.52, cod: 40.85, razorpaySett: 0.87, rto: 15.94, exchange: 1.80, balance: 4.99 },
-        { date: '11.02.2026', totalSales: 2.49, cod: 50.28, razorpaySett: 1.68, rto: 10.49, exchange: 6.50, balance: 8.69 },
-        { date: '12.02.2026', totalSales: 3.93, cod: 78.68, razorpaySett: 2.65, rto: 15.93, exchange: 8.50, balance: 21.63 },
-      ],
-      chartData: [
-        { date: '02.02', value: 3.85 },
-        { date: '03.02', value: 2.50 },
-        { date: '04.02', value: 1.71 },
-        { date: '05.02', value: 2.06 },
-        { date: '06.02', value: 1.79 },
-        { date: '07.02', value: 2.32 },
-        { date: '09.02', value: 4.45 },
-        { date: '10.02', value: 1.52 },
-        { date: '11.02', value: 2.49 },
-        { date: '12.02', value: 3.93 },
-      ],
+      description: 'Comprehensive breakdown of daily sales for February 2026 with exact values:',
+      tableData: salesData.slice(0, 10).map(day => ({
+        date: day.date,
+        totalSales: formatCurrency(day.totalSales),
+        cod: formatCurrency(day.cod),
+        razorpaySett: formatCurrency(day.razorpaySettlement),
+        rto: formatCurrency(day.rto),
+        exchange: formatCurrency(day.exchange),
+        balance: formatCurrency(day.balance)
+      })),
+      chartData: salesData.slice(0, 10).map(day => ({
+        date: day.date.substring(0, 5),
+        value: (day.totalSales / 100000)
+      })),
       keyInsights: [
-        'Total sales for February 2026 amounted to ₹60.85L across 17 business days.',
-        'Highest sales day was February 16th with ₹7.06L in sales.',
-        'Average daily sales: ₹2.97L, showing consistent business performance.'
+        `Total sales for February 2026: ${formatLakhs(totalSales)} across ${salesData.length} business days.`,
+        `Highest sales day was ${highestSalesDay.date} with ${formatLakhs(highestSalesDay.totalSales)}.`,
+        `Average daily sales: ${formatLakhs(avgDailySales)} showing business performance.`
       ],
       explanation: {
         title: 'Sales Calculation Methodology',
         points: [
-          'Total Sales represents the gross revenue generated from all orders placed on that date.',
-          'Excludes weekends (Feb 1, 8, 15) where no business operations occurred.'
+          'Total Sales represents gross revenue from all orders on each date.',
+          'Values are exact amounts from reconciliation data in Indian Rupees.'
         ]
       },
       followUp: 'Would you like to see a breakdown by payment mode or analyze specific days in detail?',
@@ -120,31 +147,29 @@ const ConversationalInsights = () => {
     'Show COD vs Razorpay settlement breakdown': {
       title: 'COD vs Razorpay Settlement Breakdown',
       description: 'Comparison of Cash on Delivery collections versus Razorpay settlement amounts for February 2026:',
-      tableData: [
-        { date: '02.02.2026', cod: 53.52, razorpaySett: 3.02, difference: 50.50, codPercent: '94.7%' },
-        { date: '03.02.2026', cod: 74.30, razorpaySett: 1.46, difference: 72.84, codPercent: '98.1%' },
-        { date: '04.02.2026', cod: 29.22, razorpaySett: 1.21, difference: 28.01, codPercent: '96.0%' },
-        { date: '05.02.2026', cod: 45.66, razorpaySett: 1.34, difference: 44.32, codPercent: '97.1%' },
-        { date: '06.02.2026', cod: 23.76, razorpaySett: 1.08, difference: 22.68, codPercent: '95.7%' },
-        { date: '07.02.2026', cod: 57.81, razorpaySett: 1.19, difference: 56.62, codPercent: '98.0%' },
-        { date: '09.02.2026', cod: 93.59, razorpaySett: 3.24, difference: 90.35, codPercent: '96.7%' },
-        { date: '10.02.2026', cod: 40.85, razorpaySett: 0.87, difference: 39.98, codPercent: '97.9%' },
-      ],
-      chartData: [
-        { date: '02.02', COD: 53.52, Razorpay: 3.02 },
-        { date: '03.02', COD: 74.30, Razorpay: 1.46 },
-        { date: '04.02', COD: 29.22, Razorpay: 1.21 },
-        { date: '05.02', COD: 45.66, Razorpay: 1.34 },
-        { date: '06.02', COD: 23.76, Razorpay: 1.08 },
-        { date: '07.02', COD: 57.81, Razorpay: 1.19 },
-        { date: '09.02', COD: 93.59, Razorpay: 3.24 },
-        { date: '10.02', COD: 40.85, Razorpay: 0.87 },
-      ],
+      tableData: salesData.filter(d => d.cod).map(day => {
+        const codVal = day.cod || 0;
+        const razVal = day.razorpaySettlement || 0;
+        const diff = codVal - razVal;
+        const codPercent = codVal + razVal > 0 ? ((codVal / (codVal + razVal)) * 100).toFixed(1) + '%' : '-';
+        return {
+          date: day.date,
+          cod: formatCurrency(codVal),
+          razorpaySett: formatCurrency(razVal),
+          difference: formatCurrency(diff),
+          codPercent
+        };
+      }),
+      chartData: salesData.filter(d => d.cod).map(day => ({
+        date: day.date.substring(0, 5),
+        COD: (day.cod / 100000),
+        Razorpay: (day.razorpaySettlement / 100000)
+      })),
       keyInsights: [
-        'COD is the dominant payment method, representing ₹684L (93.7%) of total collections.',
-        'Razorpay settlements totaled ₹38.76L, accounting for only 5.3% of payments.',
-        'February 3rd showed the highest COD collection at ₹74.30L.',
-        'Average COD collection per day: ₹40.23L vs Razorpay: ₹2.28L.'
+        `COD is the dominant payment method: ${formatLakhs(totalCOD)} (${((totalCOD / (totalCOD + totalRazorpaySettlement)) * 100).toFixed(1)}%)`,
+        `Razorpay settlements totaled: ${formatLakhs(totalRazorpaySettlement)} (${((totalRazorpaySettlement / (totalCOD + totalRazorpaySettlement)) * 100).toFixed(1)}%)`,
+        `Total Razorpay commission charged: ${formatLakhs(totalRazorpayCommission)}`,
+        `Highest COD day: ${salesData.reduce((max, d) => (d.cod || 0) > (max.cod || 0) ? d : max, salesData[0]).date}`
       ],
       explanation: {
         title: 'Understanding Payment Modes',
@@ -162,23 +187,29 @@ const ConversationalInsights = () => {
     },
     '★ COD vs Razorpay': {
       title: 'COD vs Razorpay Settlement Breakdown',
-      description: 'Comparison of Cash on Delivery collections versus Razorpay settlement amounts for February 2026:',
-      tableData: [
-        { date: '02.02.2026', cod: 53.52, razorpaySett: 3.02, difference: 50.50, codPercent: '94.7%' },
-        { date: '03.02.2026', cod: 74.30, razorpaySett: 1.46, difference: 72.84, codPercent: '98.1%' },
-        { date: '04.02.2026', cod: 29.22, razorpaySett: 1.21, difference: 28.01, codPercent: '96.0%' },
-        { date: '05.02.2026', cod: 45.66, razorpaySett: 1.34, difference: 44.32, codPercent: '97.1%' },
-      ],
-      chartData: [
-        { date: '02.02', COD: 53.52, Razorpay: 3.02 },
-        { date: '03.02', COD: 74.30, Razorpay: 1.46 },
-        { date: '04.02', COD: 29.22, Razorpay: 1.21 },
-        { date: '05.02', COD: 45.66, Razorpay: 1.34 },
-      ],
+      description: 'Comparison of Cash on Delivery collections versus Razorpay settlement for February 2026:',
+      tableData: salesData.filter(d => d.cod).slice(0, 8).map(day => {
+        const codVal = day.cod || 0;
+        const razVal = day.razorpaySettlement || 0;
+        const diff = codVal - razVal;
+        const codPercent = codVal + razVal > 0 ? ((codVal / (codVal + razVal)) * 100).toFixed(1) + '%' : '-';
+        return {
+          date: day.date,
+          cod: formatCurrency(codVal),
+          razorpaySett: formatCurrency(razVal),
+          difference: formatCurrency(diff),
+          codPercent
+        };
+      }),
+      chartData: salesData.filter(d => d.cod).slice(0, 8).map(day => ({
+        date: day.date.substring(0, 5),
+        COD: (day.cod / 100000),
+        Razorpay: (day.razorpaySettlement / 100000)
+      })),
       keyInsights: [
-        'COD is the dominant payment method, representing 93.7% of total collections.',
-        'Razorpay settlements totaled ₹38.76L for the entire month.',
-        'High COD percentage indicates strong traditional payment preference.'
+        `COD dominates payment collection: ${formatLakhs(totalCOD)} total.`,
+        `Razorpay settlements: ${formatLakhs(totalRazorpaySettlement)} for the month.`,
+        'High COD percentage indicates traditional payment preference.'
       ],
       explanation: {
         title: 'Understanding Payment Modes',
@@ -195,32 +226,28 @@ const ConversationalInsights = () => {
     'Analyze RTO trends for February': {
       title: 'RTO (Return to Origin) Analysis - February 2026',
       description: 'Detailed analysis of Return to Origin amounts and trends for the month:',
-      tableData: [
-        { date: '02.02.2026', rto: 18.99, totalSales: 3.85, rtoPercent: '493%', status: 'High' },
-        { date: '03.02.2026', rto: 19.81, totalSales: 2.50, rtoPercent: '792%', status: 'Very High' },
-        { date: '04.02.2026', rto: 15.18, totalSales: 1.71, rtoPercent: '888%', status: 'Critical' },
-        { date: '05.02.2026', rto: 17.08, totalSales: 2.06, rtoPercent: '829%', status: 'Critical' },
-        { date: '06.02.2026', rto: 23.71, totalSales: 1.79, rtoPercent: '1325%', status: 'Critical' },
-        { date: '07.02.2026', rto: 16.50, totalSales: 2.32, rtoPercent: '711%', status: 'Very High' },
-        { date: '09.02.2026', rto: 4.39, totalSales: 4.45, rtoPercent: '99%', status: 'Normal' },
-        { date: '10.02.2026', rto: 15.94, totalSales: 1.52, rtoPercent: '1049%', status: 'Critical' },
-      ],
-      chartData: [
-        { date: '02.02', value: 18.99 },
-        { date: '03.02', value: 19.81 },
-        { date: '04.02', value: 15.18 },
-        { date: '05.02', value: 17.08 },
-        { date: '06.02', value: 23.71 },
-        { date: '07.02', value: 16.50 },
-        { date: '09.02', value: 4.39 },
-        { date: '10.02', value: 15.94 },
-      ],
+      tableData: salesData.filter(d => d.rto).slice(0, 10).map(day => {
+        const rtoVal = day.rto || 0;
+        const salesVal = day.totalSales || 1;
+        const rtoPercent = ((rtoVal / salesVal) * 100).toFixed(0) + '%';
+        const status = (rtoVal / salesVal) > 0.15 ? 'High' : 'Normal';
+        return {
+          date: day.date,
+          rto: formatCurrency(rtoVal),
+          totalSales: formatCurrency(salesVal),
+          rtoPercent,
+          status
+        };
+      }),
+      chartData: salesData.filter(d => d.rto).slice(0, 10).map(day => ({
+        date: day.date.substring(0, 5),
+        value: (day.rto / 100000)
+      })),
       keyInsights: [
-        'Total RTO amount for February: ₹175.42L - significantly high compared to sales.',
-        'RTO percentages are critically high (avg 843%), indicating major delivery/quality issues.',
-        'Week 1 showed highest RTO concentration with ₹72.56L in returns.',
-        'February 6th had the worst RTO day at ₹23.71L (1325% of sales).',
-        'Only Feb 9th showed normal RTO levels at 99% of sales.'
+        `Total RTO amount for February: ${formatLakhs(totalRTO)}`,
+        `Average RTO per day: ${formatLakhs(totalRTO / salesData.filter(d => d.rto).length)}`,
+        `RTO as % of total sales: ${((totalRTO / totalSales) * 100).toFixed(1)}%`,
+        `Highest RTO day: ${salesData.reduce((max, d) => (d.rto || 0) > (max.rto || 0) ? d : max, salesData[0]).date}`
       ],
       explanation: {
         title: 'Understanding RTO Impact',
@@ -228,10 +255,10 @@ const ConversationalInsights = () => {
           'RTO (Return to Origin) occurs when customers refuse delivery or orders are undeliverable.',
           'High RTO percentages indicate product quality issues, wrong deliveries, or customer dissatisfaction.',
           'Each RTO incurs additional logistics costs and impacts profitability.',
-          'Normal RTO rate should be under 10-15% of sales; current rates are 8-10x higher.'
+          'Normal RTO rate should be under 10-15% of sales.'
         ]
       },
-      followUp: 'Critical attention needed! Would you like to see root cause analysis or mitigation strategies?',
+      followUp: 'Would you like to see root cause analysis or mitigation strategies?',
       suggestedFollowUps: [
         'Show exchange amount trends',
         'What is the outstanding balance status?'
@@ -240,19 +267,24 @@ const ConversationalInsights = () => {
     '★ RTO Trends': {
       title: 'RTO (Return to Origin) Analysis',
       description: 'Detailed analysis of Return to Origin amounts and trends:',
-      tableData: [
-        { date: '02.02.2026', rto: 18.99, totalSales: 3.85, rtoPercent: '493%' },
-        { date: '03.02.2026', rto: 19.81, totalSales: 2.50, rtoPercent: '792%' },
-        { date: '04.02.2026', rto: 15.18, totalSales: 1.71, rtoPercent: '888%' },
-      ],
-      chartData: [
-        { date: '02.02', value: 18.99 },
-        { date: '03.02', value: 19.81 },
-        { date: '04.02', value: 15.18 },
-      ],
+      tableData: salesData.filter(d => d.rto).slice(0, 5).map(day => {
+        const rtoVal = day.rto || 0;
+        const salesVal = day.totalSales || 1;
+        const rtoPercent = ((rtoVal / salesVal) * 100).toFixed(0) + '%';
+        return {
+          date: day.date,
+          rto: formatCurrency(rtoVal),
+          totalSales: formatCurrency(salesVal),
+          rtoPercent
+        };
+      }),
+      chartData: salesData.filter(d => d.rto).slice(0, 5).map(day => ({
+        date: day.date.substring(0, 5),
+        value: (day.rto / 100000)
+      })),
       keyInsights: [
-        'Total RTO for February: ₹175.42L',
-        'RTO percentages are critically high, indicating delivery issues.'
+        `Total RTO for February: ${formatLakhs(totalRTO)}`,
+        `RTO as % of sales: ${((totalRTO / totalSales) * 100).toFixed(1)}%`
       ],
       explanation: {
         title: 'Understanding RTO',
@@ -269,47 +301,24 @@ const ConversationalInsights = () => {
     'What is the outstanding balance status?': {
       title: 'Outstanding Balance Status - February 2026',
       description: 'Analysis of accumulated outstanding balances across the month:',
-      tableData: [
-        { date: '04.02.2026', balance: 1.50, status: 'Low' },
-        { date: '05.02.2026', balance: 5.40, status: 'Low' },
-        { date: '06.02.2026', balance: 15.24, status: 'Moderate' },
-        { date: '07.02.2026', balance: 28.82, status: 'Moderate' },
-        { date: '09.02.2026', balance: 14.04, status: 'Moderate' },
-        { date: '10.02.2026', balance: 4.99, status: 'Low' },
-        { date: '11.02.2026', balance: 8.69, status: 'Low' },
-        { date: '12.02.2026', balance: 21.63, status: 'Moderate' },
-        { date: '13.02.2026', balance: 1.20, status: 'Low' },
-        { date: '14.02.2026', balance: 50.56, status: 'High' },
-        { date: '16.02.2026', balance: 69.60, status: 'High' },
-        { date: '17.02.2026', balance: 2.18, status: 'Low' },
-        { date: '18.02.2026', balance: 89.34, status: 'Very High' },
-        { date: '19.02.2026', balance: 55.81, status: 'High' },
-        { date: '20.02.2026', balance: 60.36, status: 'High' },
-        { date: '21.02.2026', balance: 83.85, status: 'Very High' },
-      ],
-      chartData: [
-        { date: '04.02', value: 1.50 },
-        { date: '05.02', value: 5.40 },
-        { date: '06.02', value: 15.24 },
-        { date: '07.02', value: 28.82 },
-        { date: '09.02', value: 14.04 },
-        { date: '10.02', value: 4.99 },
-        { date: '11.02', value: 8.69 },
-        { date: '12.02', value: 21.63 },
-        { date: '13.02', value: 1.20 },
-        { date: '14.02', value: 50.56 },
-        { date: '16.02', value: 69.60 },
-        { date: '17.02', value: 2.18 },
-        { date: '18.02', value: 89.34 },
-        { date: '19.02', value: 55.81 },
-        { date: '20.02', value: 60.36 },
-        { date: '21.02', value: 83.85 },
-      ],
+      tableData: salesData.map(day => {
+        const balVal = day.balance || 0;
+        const status = balVal > 50000 ? 'High' : balVal > 10000 ? 'Moderate' : 'Low';
+        return {
+          date: day.date,
+          balance: formatCurrency(balVal),
+          status
+        };
+      }),
+      chartData: salesData.map(day => ({
+        date: day.date.substring(0, 5),
+        value: (day.balance / 100000)
+      })),
       keyInsights: [
-        'Total outstanding balance accumulated: ₹513.21L by end of February.',
-        'Sharp increase from mid-February onwards, with Feb 18th showing highest balance at ₹89.34L.',
-        'Week 1 showed manageable balances (avg ₹10.83L), but Week 3 escalated dramatically (avg ₹73.42L).',
-        'Balance trend is upward, indicating growing reconciliation gaps or payment delays.'
+        `Total outstanding balance accumulated: ${formatLakhs(totalBalance)}`,
+        `Highest balance day: ${salesData.reduce((max, d) => (d.balance || 0) > (max.balance || 0) ? d : max, salesData[0]).date}`,
+        `Average balance: ${formatLakhs(totalBalance / salesData.length)}`,
+        'Balance trend requires immediate reconciliation attention.'
       ],
       explanation: {
         title: 'What is Outstanding Balance?',
@@ -320,7 +329,7 @@ const ConversationalInsights = () => {
           'Ideal balance should trend towards zero as transactions get reconciled.'
         ]
       },
-      followUp: 'Critical issue! Would you like a detailed reconciliation breakdown or payment follow-up list?',
+      followUp: 'Would you like a detailed reconciliation breakdown or payment follow-up list?',
       suggestedFollowUps: [
         'Show payment mode distribution',
         'Show COD vs Razorpay settlement breakdown'
@@ -329,19 +338,20 @@ const ConversationalInsights = () => {
     '★ Outstanding Balance': {
       title: 'Outstanding Balance Status',
       description: 'Analysis of accumulated outstanding balances:',
-      tableData: [
-        { date: '04.02.2026', balance: 1.50 },
-        { date: '05.02.2026', balance: 5.40 },
-        { date: '06.02.2026', balance: 15.24 },
-      ],
-      chartData: [
-        { date: '04.02', value: 1.50 },
-        { date: '05.02', value: 5.40 },
-        { date: '06.02', value: 15.24 },
-      ],
+      tableData: salesData.slice(0, 10).map(day => {
+        const balVal = day.balance || 0;
+        return {
+          date: day.date,
+          balance: formatCurrency(balVal)
+        };
+      }),
+      chartData: salesData.slice(0, 10).map(day => ({
+        date: day.date.substring(0, 5),
+        value: (day.balance / 100000)
+      })),
       keyInsights: [
-        'Total outstanding: ₹513.21L by end of February.',
-        'Balance trend is upward, indicating reconciliation gaps.'
+        `Total outstanding: ${formatLakhs(totalBalance)} by end of February.`,
+        'Balance trend indicates reconciliation gaps.'
       ],
       explanation: {
         title: 'Understanding Outstanding Balance',
@@ -350,9 +360,45 @@ const ConversationalInsights = () => {
           'High balances indicate cashflow issues.'
         ]
       },
-      followUp: 'Critical issue! Need reconciliation.',
+      followUp: 'Need reconciliation assistance?',
       suggestedFollowUps: [
         'Show payment mode distribution'
+      ]
+    },
+    '★ Payment Distribution': {
+      title: 'Payment Mode Distribution - February 2026',
+      description: 'Breakdown of all payment methods used during the month:',
+      tableData: [
+        { mode: 'COD', amount: formatCurrency(totalCOD), percentage: `${((totalCOD / totalSales) * 100).toFixed(1)}%` },
+        { mode: 'Razorpay', amount: formatCurrency(totalRazorpaySettlement), percentage: `${((totalRazorpaySettlement / totalSales) * 100).toFixed(1)}%` },
+        { mode: 'Direct Collection', amount: formatCurrency(totalDirectCollection), percentage: `${((totalDirectCollection / totalSales) * 100).toFixed(2)}%` },
+        { mode: 'Gift Card', amount: formatCurrency(totalGiftCard), percentage: `${((totalGiftCard / totalSales) * 100).toFixed(2)}%` }
+      ],
+      chartData: [
+        { name: 'COD', value: totalCOD / 100000 },
+        { name: 'Razorpay', value: totalRazorpaySettlement / 100000 },
+        { name: 'Direct Collection', value: totalDirectCollection / 100000 },
+        { name: 'Gift Card', value: totalGiftCard / 100000 }
+      ],
+      keyInsights: [
+        `COD dominates with ${formatLakhs(totalCOD)} (${((totalCOD / totalSales) * 100).toFixed(1)}%)`,
+        `Razorpay: ${formatLakhs(totalRazorpaySettlement)} after ${formatLakhs(totalRazorpayCommission)} commission`,
+        `Alternative payments (Direct + Gift Card): ${formatLakhs(totalDirectCollection + totalGiftCard)}`,
+        'Customer preference heavily skewed towards COD payment method.'
+      ],
+      explanation: {
+        title: 'Payment Mode Analysis',
+        points: [
+          'COD represents cash collected on delivery from customers.',
+          'Razorpay is online payment gateway with commission charges applied.',
+          'Direct Collection includes cash payments made directly at store/office.',
+          'Gift Cards represent voucher redemptions.'
+        ]
+      },
+      followUp: 'Would you like strategies to increase online payment adoption?',
+      suggestedFollowUps: [
+        'Show COD vs Razorpay settlement breakdown',
+        'What was total sales for February 2026?'
       ]
     }
   };
