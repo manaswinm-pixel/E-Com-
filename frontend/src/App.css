@@ -3071,13 +3071,13 @@
   }
 }
 
-/* ===== SUMMARY OF DATA - EXCEL TABLE ===== */
+/* ===== SUMMARY OF DATA - EXCEL TABLE (SIMPLE STYLING) ===== */
 .summary-data-panel {
   background: white;
   border-radius: 12px;
   padding: 0;
   margin-top: 32px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   border: 1px solid #e5e7eb;
   overflow: hidden;
 }
@@ -3087,8 +3087,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  background: #f8fafc;
-  border-bottom: 2px solid #e5e7eb;
+  background: #fafafa;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .panel-title-excel {
@@ -3124,6 +3124,7 @@
   overflow-x: auto;
   overflow-y: auto;
   max-height: 600px;
+  background: white;
 }
 
 .excel-table {
@@ -3137,17 +3138,23 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  background: #1e3a5f;
+  background: #f9fafb;
 }
 
 .excel-table th {
   padding: 12px 16px;
   text-align: left;
   font-weight: 600;
-  color: white;
-  border: 1px solid #334e68;
-  background: #1e3a5f;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  background: #f9fafb;
   white-space: nowrap;
+  font-size: 12px;
+}
+
+.excel-table th:last-child {
+  border-right: none;
 }
 
 .th-content {
@@ -3158,17 +3165,22 @@
 }
 
 .filter-icon {
-  color: rgba(255, 255, 255, 0.7);
+  color: #9ca3af;
   cursor: pointer;
   transition: color 0.2s ease;
+  opacity: 0;
+}
+
+.excel-table th:hover .filter-icon {
+  opacity: 1;
 }
 
 .filter-icon:hover {
-  color: white;
+  color: #6b7280;
 }
 
 .excel-table tbody tr {
-  transition: background 0.2s ease;
+  transition: background 0.15s ease;
 }
 
 .excel-table tbody tr:nth-child(odd) {
@@ -3176,61 +3188,71 @@
 }
 
 .excel-table tbody tr:nth-child(even) {
-  background: #f8fafc;
+  background: #fafafa;
 }
 
 .excel-table tbody tr:hover {
-  background: #e0f2fe;
+  background: #f3f4f6;
 }
 
 .excel-table tbody tr.empty-row {
-  background: #f1f5f9;
+  background: #f9fafb;
 }
 
 .excel-table tbody tr.empty-row:hover {
-  background: #e2e8f0;
+  background: #f3f4f6;
 }
 
 .excel-table td {
   padding: 10px 16px;
-  border: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  border-right: 1px solid #f3f4f6;
   color: #1e293b;
+  font-size: 13px;
+}
+
+.excel-table td:last-child {
+  border-right: none;
 }
 
 .date-column {
   font-weight: 500;
   color: #0f172a;
-  background: #fef3c7;
+  background: #fef9e7;
   white-space: nowrap;
+  border-right: 1px solid #e5e7eb;
 }
 
 .number-column {
   text-align: right;
   font-family: 'Consolas', 'Monaco', monospace;
-  font-weight: 500;
+  font-weight: 400;
+  color: #374151;
 }
 
 .text-column {
-  color: #64748b;
+  color: #6b7280;
   text-align: center;
+  font-size: 12px;
 }
 
+/* Scrollbar styling for excel table */
 .excel-table-container::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
 }
 
 .excel-table-container::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #f9fafb;
 }
 
 .excel-table-container::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 6px;
+  background: #d1d5db;
+  border-radius: 5px;
 }
 
 .excel-table-container::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #9ca3af;
 }
 
 /* ===== SIDE BY SIDE KPI LAYOUT ===== */
