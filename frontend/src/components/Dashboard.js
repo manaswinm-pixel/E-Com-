@@ -199,11 +199,19 @@ const Dashboard = () => {
           <div className="chart-container" style={{ height: '320px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={orderReconciliationData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                <XAxis dataKey="period" tick={{ fontSize: 12 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                <XAxis 
+                  dataKey="period" 
+                  angle={-45}
+                  textAnchor="end"
+                  height={100}
+                  tick={{ fontSize: 11 }}
+                  stroke="#94a3b8"
+                />
                 <YAxis 
-                  label={{ value: 'Number of Orders Reconciled', angle: -90, position: 'insideLeft', style: { fontSize: 12 } }}
-                  tick={{ fontSize: 12 }} 
+                  label={{ value: 'No of Parties', angle: -90, position: 'insideLeft', style: { fontSize: 12 } }}
+                  tick={{ fontSize: 12 }}
+                  stroke="#94a3b8"
                 />
                 <Tooltip />
                 <Bar dataKey="orders" fill="#66B3FF" radius={[4, 4, 0, 0]} />
@@ -221,14 +229,35 @@ const Dashboard = () => {
           <div className="chart-container" style={{ height: '320px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={settlementTrendData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                <XAxis dataKey="week" tick={{ fontSize: 12 }} />
+                <defs>
+                  <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#66B3FF" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#66B3FF" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                <XAxis 
+                  dataKey="week" 
+                  angle={-45}
+                  textAnchor="end"
+                  height={100}
+                  tick={{ fontSize: 11 }}
+                  stroke="#94a3b8"
+                />
                 <YAxis 
-                  label={{ value: 'Total Settled Amount (Cr)', angle: -90, position: 'insideLeft', style: { fontSize: 12 } }}
-                  tick={{ fontSize: 12 }} 
+                  label={{ value: 'No of Recons', angle: -90, position: 'insideLeft', style: { fontSize: 12 } }}
+                  tick={{ fontSize: 12 }}
+                  stroke="#94a3b8"
                 />
                 <Tooltip />
-                <Line type="monotone" dataKey="amount" stroke="#66B3FF" strokeWidth={2} dot={{ fill: '#66B3FF', r: 5 }} />
+                <Line 
+                  type="monotone" 
+                  dataKey="amount" 
+                  stroke="#66B3FF" 
+                  strokeWidth={2} 
+                  dot={{ fill: '#66B3FF', r: 4 }}
+                  fill="url(#colorAmount)"
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -272,18 +301,19 @@ const Dashboard = () => {
                   data={revenueSourceData}
                   cx="50%"
                   cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
+                  innerRadius={60}
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
+                  label={({ value }) => value}
+                  labelLine={true}
                 >
                   {revenueSourceData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip />
-                <Legend />
+                <Legend layout="vertical" align="right" verticalAlign="middle" />
               </PieChart>
             </ResponsiveContainer>
           </div>
