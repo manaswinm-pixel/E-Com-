@@ -3232,3 +3232,38 @@
 .excel-table-container::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* ===== SIDE BY SIDE KPI LAYOUT ===== */
+.kpi-section-side-by-side {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.kpi-container-box {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.kpi-grid-four {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+@media (max-width: 1200px) {
+  .kpi-section-side-by-side {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .kpi-grid-four {
+    grid-template-columns: 1fr;
+  }
+}

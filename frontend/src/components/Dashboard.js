@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { TrendingUp, TrendingDown, Package, DollarSign, AlertTriangle, CheckCircle, ChevronDown, Download, Filter } from 'lucide-react';
 
-// May-bell Data Feb 2026 - Based on Excel Screenshot
+// May-bell Data Feb 2026 - Raw data from Excel
 const salesData = [
   { date: '01.02.2026', totalSales: null, cod: null, razorpayCommission: null, razorpaySettlement: null, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: null },
   { date: '02.02.2026', totalSales: 3.85, cod: 53.52, razorpayCommission: 3.04, razorpaySettlement: 3.02, directCollection: null, giftCard: null, rto: 18.99, exchange: 6.30, excessAmtRefund: null, balance: 0 },
@@ -27,25 +27,6 @@ const salesData = [
   { date: '21.02.2026', totalSales: 2.78, cod: null, razorpayCommission: 1.59, razorpaySettlement: 1.92, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: 83.85 },
 ];
 
-const totalSalesData = salesData.filter(d => d.totalSales !== null).map(d => ({
-  date: d.date.substring(0, 5),
-  sales: d.totalSales
-}));
-
-const paymentModeData = [
-  { mode: 'COD', value: 45.2, color: '#10b981' },
-  { mode: 'Razorpay', value: 35.8, color: '#3b82f6' },
-  { mode: 'Direct Collection', value: 1.9, color: '#8b5cf6' },
-  { mode: 'Gift Card', value: 2.6, color: '#f59e0b' },
-  { mode: 'Others', value: 14.5, color: '#6b7280' },
-];
-
-const rtoExchangeTrendData = [
-  { week: 'Week 1', rto: 72.6, exchange: 23.9 },
-  { week: 'Week 2', rto: 60.8, exchange: 32.5 },
-  { week: 'Week 3', rto: 42.1, exchange: 28.3 },
-];
-
 const dailySalesChartData = [
   { date: '02.02', sales: 3.85 },
   { date: '03.02', sales: 2.50 },
@@ -63,6 +44,25 @@ const dailySalesChartData = [
   { date: '17.02', sales: 4.29 },
 ];
 
+const paymentModeData = [
+  { mode: 'Week 1', cod: 283.27, razorpay: 12.17 },
+  { mode: 'Week 2', cod: 332.63, razorpay: 13.79 },
+  { mode: 'Week 3', cod: 68.22, razorpay: 12.81 },
+];
+
+const rtoExchangeTrendData = [
+  { week: 'Week 1', rto: 72.56, exchange: 23.94 },
+  { week: 'Week 2', rto: 60.83, exchange: 32.58 },
+  { week: 'Week 3', rto: 42.03, exchange: 47.79 },
+];
+
+const revenueSourceData = [
+  { name: 'COD', value: 684, color: '#10b981' },
+  { name: 'Razorpay', value: 39, color: '#3b82f6' },
+  { name: 'Direct Collection', value: 2, color: '#8b5cf6' },
+  { name: 'Gift Card', value: 6, color: '#f59e0b' },
+];
+
 const Dashboard = () => {
   const [reconType, setReconType] = useState('May-bell Data Feb 2026');
   const [showDropdown, setShowDropdown] = useState(false);
@@ -74,7 +74,7 @@ const Dashboard = () => {
     'Bank Reconciliation',
   ];
 
-  // Calculate KPIs from data
+  // Calculate KPIs
   const totalSales = salesData.reduce((sum, item) => sum + (item.totalSales || 0), 0).toFixed(2);
   const totalCOD = salesData.reduce((sum, item) => sum + (item.cod || 0), 0).toFixed(2);
   const totalRazorpay = salesData.reduce((sum, item) => sum + (item.razorpaySettlement || 0), 0).toFixed(2);
@@ -85,7 +85,6 @@ const Dashboard = () => {
   const directCollectionTotal = salesData.reduce((sum, item) => sum + (item.directCollection || 0), 0).toFixed(2);
 
   const handleDownloadExcel = () => {
-    // Create CSV content
     let csvContent = 'Invoice Created,Total Sales,COD,Razorpay Commission,Razorpay Settlement,Direct Collection,Gift Card,RTO,Exchange,Excess Amt Refund,Balance,Remarks\n';
     
     salesData.forEach(row => {
@@ -142,21 +141,22 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* KPI Cards Section */}
-      <div className="kpi-section">
-        <div className="kpi-container">
+      {/* KPI Cards Section - SIDE BY SIDE LAYOUT */}
+      <div className="kpi-section-side-by-side">
+        {/* Key Performance Indicators Container */}
+        <div className="kpi-container-box">
           <h2 className="kpi-section-title">Key Performance Indicators</h2>
-          <div className="kpi-grid">
+          <div className="kpi-grid-four">
             <div className="kpi-card">
               <div className="kpi-icon" style={{ backgroundColor: '#e3f2fd' }}>
                 <DollarSign size={24} color="#1976d2" />
               </div>
               <div className="kpi-content">
-                <p className="kpi-label">Total Sales (Feb 2026)</p>
+                <p className="kpi-label">Total Sales</p>
                 <h3 className="kpi-value">₹{totalSales}L</h3>
                 <div className="kpi-change positive">
                   <TrendingUp size={16} />
-                  <span>+12.5% vs Jan</span>
+                  <span>+12.5%</span>
                 </div>
               </div>
             </div>
@@ -170,7 +170,7 @@ const Dashboard = () => {
                 <h3 className="kpi-value">₹{totalCOD}L</h3>
                 <div className="kpi-change positive">
                   <TrendingUp size={16} />
-                  <span>+8.3% vs Jan</span>
+                  <span>+8.3%</span>
                 </div>
               </div>
             </div>
@@ -184,7 +184,7 @@ const Dashboard = () => {
                 <h3 className="kpi-value">₹{totalRazorpay}L</h3>
                 <div className="kpi-change positive">
                   <TrendingUp size={16} />
-                  <span>+15.2% vs Jan</span>
+                  <span>+15.2%</span>
                 </div>
               </div>
             </div>
@@ -198,16 +198,17 @@ const Dashboard = () => {
                 <h3 className="kpi-value">₹{totalRTO}L</h3>
                 <div className="kpi-change negative">
                   <TrendingDown size={16} />
-                  <span>-5.1% vs Jan</span>
+                  <span>-5.1%</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="kpi-container">
+        {/* Operational Metrics Container */}
+        <div className="kpi-container-box">
           <h2 className="kpi-section-title">Operational Metrics</h2>
-          <div className="kpi-grid">
+          <div className="kpi-grid-four">
             <div className="kpi-card">
               <div className="kpi-icon" style={{ backgroundColor: '#e1f5fe' }}>
                 <DollarSign size={24} color="#0288d1" />
@@ -244,7 +245,7 @@ const Dashboard = () => {
                 <h3 className="kpi-value">₹{avgDailySales}L</h3>
                 <div className="kpi-change positive">
                   <TrendingUp size={16} />
-                  <span>+10.2% vs Jan</span>
+                  <span>+10.2%</span>
                 </div>
               </div>
             </div>
@@ -267,26 +268,25 @@ const Dashboard = () => {
 
       {/* Charts Section - First Row */}
       <div className="charts-row two-column">
-        {/* Payment Mode Distribution */}
         <div className="chart-card">
           <div className="chart-header">
-            <h3 className="chart-title">Payment Mode Distribution</h3>
+            <h3 className="chart-title">Revenue Source Distribution</h3>
           </div>
           <div className="chart-container" style={{ height: '320px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={paymentModeData}
+                  data={revenueSourceData}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
-                  label={({ value }) => `${value}%`}
+                  label={({ value }) => `₹${value}L`}
                   labelLine={true}
                 >
-                  {paymentModeData.map((entry, index) => (
+                  {revenueSourceData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -297,18 +297,17 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Daily Sales Trend */}
         <div className="chart-card">
           <div className="chart-header">
-            <h3 className="chart-title">Daily Sales Trend (Feb 2026)</h3>
+            <h3 className="chart-title">Daily Sales Trend</h3>
           </div>
           <div className="chart-container" style={{ height: '320px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={dailySalesChartData}>
                 <defs>
                   <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                    <stop offset="5%" stopColor="#66B3FF" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#66B3FF" stopOpacity={0.1}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
@@ -318,7 +317,7 @@ const Dashboard = () => {
                 <Area 
                   type="monotone" 
                   dataKey="sales" 
-                  stroke="#3b82f6" 
+                  stroke="#66B3FF" 
                   fillOpacity={1} 
                   fill="url(#colorSales)" 
                   strokeWidth={2}
@@ -331,10 +330,9 @@ const Dashboard = () => {
 
       {/* Charts Section - Second Row */}
       <div className="charts-row two-column">
-        {/* RTO vs Exchange Trend */}
         <div className="chart-card">
           <div className="chart-header">
-            <h3 className="chart-title">RTO vs Exchange Trend</h3>
+            <h3 className="chart-title">RTO vs Exchange Coverage</h3>
           </div>
           <div className="chart-container" style={{ height: '320px' }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -351,28 +349,27 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Settlement vs Commission */}
         <div className="chart-card">
           <div className="chart-header">
-            <h3 className="chart-title">Razorpay Settlement vs Commission</h3>
+            <h3 className="chart-title">Payment Mode Distribution</h3>
           </div>
           <div className="chart-container" style={{ height: '320px' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={salesData.filter(d => d.razorpaySettlement !== null).slice(0, 10)}>
+              <BarChart data={paymentModeData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                <XAxis dataKey="date" tick={{ fontSize: 10 }} angle={-45} textAnchor="end" height={80} />
+                <XAxis dataKey="mode" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="razorpaySettlement" stroke="#3b82f6" strokeWidth={2} name="Settlement" />
-                <Line type="monotone" dataKey="razorpayCommission" stroke="#8b5cf6" strokeWidth={2} name="Commission" />
-              </LineChart>
+                <Bar dataKey="cod" stackId="a" fill="#10b981" name="COD" />
+                <Bar dataKey="razorpay" stackId="a" fill="#3b82f6" name="Razorpay" />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      {/* Summary of Data - Excel-like Table */}
+      {/* Summary of Data - Excel Table */}
       <div className="summary-data-panel" data-testid="summary-data">
         <div className="panel-header-excel">
           <h3 className="panel-title-excel">Summary of Data - February 2026</h3>
