@@ -1,16 +1,28 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Star, TrendingUp } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Send, Star, TrendingUp, ThumbsUp, ThumbsDown, Copy, ChevronLeft, ChevronRight } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const ConversationalInsights = () => {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [viewMode, setViewMode] = useState({});
+  const [showFAQ, setShowFAQ] = useState(false);
   const messagesEndRef = useRef(null);
 
-  const arQuestions = [
+  const preBuiltQuestions = [
+    '★ Cash Flow Forecast',
+    '★ Revenue Growth',
+    '★ Overdue Invoices',
+    '★ Profitability',
+    '★ Burn Rate / Runway'
+  ];
+
+  const faqSuggestions = [
     'Top 10 due invoices that can be collected?',
-    'Top 10 customers who owe us money?'
+    'Top 10 customers who owe us money?',
+    'What is my current DSO?',
+    'Show revenue trends by month',
+    'List all overdue invoices'
   ];
 
   const mockResponses = {
@@ -18,14 +30,28 @@ const ConversationalInsights = () => {
       title: 'Top 10 Overdue Invoices (Most Collectible)',
       description: 'Here are the top 10 overdue invoices that can be targeted for collection, sorted by the highest number of overdue days:',
       tableData: [
-        { rank: 1, partyShortName: 'BUDGET SIGNS UNIT 1', partyName: 'BUDGET SIGNS UNIT 1', docNo: '639', docDate: '2018-10-30' },
-        { rank: 2, partyShortName: 'SINEX SYSTEMS PVT LTD', partyName: 'SINEX SYSTEMS PVT LTD', docNo: '736', docDate: '2018-11-26' },
-        { rank: 3, partyShortName: 'CLASSIC SIGNAGES PVT LTD', partyName: 'CLASSIC SIGNAGES PVT LTD', docNo: '837', docDate: '2018-12-21' },
+        { rank: 1, partyShortName: 'BUDGET SIGNS UNIT 1', partyName: 'BUDGET SIGNS UNIT 1', docNo: 639, docDate: '2018-10-30', amount: 8432.0, daysOverdue: 2450, creditDays: 30, dueDate: '2018-11-29', region: 'Not Applicable', status: 'NOT APPLIED/ABLE' },
+        { rank: 2, partyShortName: 'SINEX SYSTEMS PVT LTD', partyName: 'SINEX SYSTEMS PVT LTD', docNo: 736, docDate: '2018-11-26', amount: 19218.0, daysOverdue: 2424, creditDays: 30, dueDate: '2018-12-26', region: 'Not Applicable', status: 'NOT APPLIED/ABLE' },
+        { rank: 3, partyShortName: 'CLASSIC SIGNAGES PVT LTD', partyName: 'CLASSIC SIGNAGES PVT LTD', docNo: 837, docDate: '2018-12-21', amount: 1354.0, daysOverdue: 2399, creditDays: 30, dueDate: '2019-01-20', region: 'Not Applicable', status: 'NOT APPLIED/ABLE' },
+        { rank: 4, partyShortName: 'CLASSIC SIGNAGES PVT LTD', partyName: 'CLASSIC SIGNAGES PVT LTD', docNo: 838, docDate: '2018-12-21', amount: 17186.0, daysOverdue: 2424, creditDays: 30, dueDate: '2018-01-20', region: 'Not Applicable', status: 'NOT APPLIED/ABLE' },
+        { rank: 5, partyShortName: 'CLASSIC SIGNAGES PVT LTD', partyName: 'CLASSIC SIGNAGES PVT LTD', docNo: 407, docDate: '2019-11-11', amount: 3358, daysOverdue: 2103, creditDays: 30, dueDate: '2019-12-11', region: '', status: '' },
+        { rank: 6, partyShortName: 'CLASSIC SIGNAGES PVT LTD', partyName: 'CLASSIC SIGNAGES PVT LTD', docNo: 486, docDate: '2019-11-11', amount: 1783.0, daysOverdue: 2162, creditDays: 30, dueDate: '2019-12-11', region: '', status: '' },
+        { rank: 7, partyShortName: 'BUDGET SIGNS UNIT 1', partyName: 'BUDGET SIGNS UNIT 1', docNo: 488, docDate: '2019-11-12', amount: 8302, daysOverdue: 2162, creditDays: 30, dueDate: '2019-12-12', region: '', status: '' },
+        { rank: 8, partyShortName: 'SINEX SYSTEMS PVT LTD', partyName: 'SINEX SYSTEMS PVT LTD', docNo: 468, docDate: '2020-01-14', amount: 6138.0, daysOverdue: 2138, creditDays: 30, dueDate: '2020-02-13', region: '', status: '' },
+        { rank: 9, partyShortName: 'SINEX SYSTEMS PVT LTD', partyName: 'SINEX SYSTEMS PVT LTD', docNo: 467, docDate: '2020-01-14', amount: 10129.0, daysOverdue: 2138, creditDays: 30, dueDate: '2020-02-13', region: '', status: '' },
+        { rank: 10, partyShortName: 'CLASSIC SIGNAGES PVT LTD', partyName: 'CLASSIC SIGNAGES PVT LTD', docNo: 357, docDate: '2020-03-17', amount: 104, daysOverdue: 1962, creditDays: 30, dueDate: '2020-04-16', region: '', status: '' }
       ],
       chartData: [
-        { name: 'BUDGET SIGNS', value: 639 },
-        { name: 'SINEX SYSTEMS', value: 736 },
-        { name: 'CLASSIC SIGNAGES', value: 837 },
+        { rank: 1, value: 8432 },
+        { rank: 2, value: 19218 },
+        { rank: 3, value: 1354 },
+        { rank: 4, value: 17186 },
+        { rank: 5, value: 3358 },
+        { rank: 6, value: 1783 },
+        { rank: 7, value: 8302 },
+        { rank: 8, value: 6138 },
+        { rank: 9, value: 10129 },
+        { rank: 10, value: 104 }
       ],
       keyInsights: [
         'The receivables highlighted above are extremely overdue (ranging from ~5 to 7 years past due). Immediate attention is advised for follow-up.',
@@ -41,38 +67,39 @@ const ConversationalInsights = () => {
       },
       followUp: 'Want to see more details for a specific party, or summarize all old due invoices by customer?',
       suggestedFollowUps: [
-        'Show party-wise total oldest AR due for collection'
+        'Show party-wise total oldest AR due for collection',
+        'List all invoices due above ₹1 lakh for follow-up'
       ]
     },
-    'Top 10 customers who owe us money?': {
-      title: 'Top 10 Customers by Outstanding AR',
-      description: 'Here are the customers with the highest outstanding accounts receivable:',
+    '★ Overdue Invoices': {
+      title: 'Top 10 Overdue Invoices (Most Collectible)',
+      description: 'Here are the top 10 overdue invoices that can be targeted for collection, sorted by the highest number of overdue days:',
       tableData: [
-        { rank: 1, customerName: 'ABC RETAIL PVT LTD', outstanding: '₹25.8 lakh', avgDelay: '45 days', lastPayment: '2024-11-15' },
-        { rank: 2, customerName: 'XYZ TRADERS', outstanding: '₹19.2 lakh', avgDelay: '32 days', lastPayment: '2024-11-28' },
-        { rank: 3, customerName: 'MODERN STORES', outstanding: '₹18.5 lakh', avgDelay: '28 days', lastPayment: '2024-12-05' },
+        { rank: 1, partyShortName: 'BUDGET SIGNS UNIT 1', partyName: 'BUDGET SIGNS UNIT 1', docNo: 639, docDate: '2018-10-30', amount: 8432.0, daysOverdue: 2450, creditDays: 30, dueDate: '2018-11-29', region: 'Not Applicable', status: 'NOT APPLIED/ABLE' },
+        { rank: 2, partyShortName: 'SINEX SYSTEMS PVT LTD', partyName: 'SINEX SYSTEMS PVT LTD', docNo: 736, docDate: '2018-11-26', amount: 19218.0, daysOverdue: 2424, creditDays: 30, dueDate: '2018-12-26', region: 'Not Applicable', status: 'NOT APPLIED/ABLE' },
+        { rank: 3, partyShortName: 'CLASSIC SIGNAGES PVT LTD', partyName: 'CLASSIC SIGNAGES PVT LTD', docNo: 837, docDate: '2018-12-21', amount: 1354.0, daysOverdue: 2399, creditDays: 30, dueDate: '2019-01-20', region: 'Not Applicable', status: 'NOT APPLIED/ABLE' }
       ],
       chartData: [
-        { name: 'ABC RETAIL', value: 25.8 },
-        { name: 'XYZ TRADERS', value: 19.2 },
-        { name: 'MODERN STORES', value: 18.5 },
+        { rank: 1, value: 8432 },
+        { rank: 2, value: 19218 },
+        { rank: 3, value: 1354 }
       ],
       keyInsights: [
-        'Top 3 customers account for ₹63.5 lakh in outstanding AR',
-        'Average payment delay across these customers is 35 days',
-        'ABC RETAIL PVT LTD requires immediate follow-up'
+        'The receivables highlighted above are extremely overdue (ranging from ~5 to 7 years past due). Immediate attention is advised for follow-up.',
+        'Several high-value invoices (up to ₹19 lakh+) are collectible – especially for \'SINEX SYSTEMS PVT LTD\' and \'CLASSIC SIGNAGES PVT LTD\'.',
+        'Action on these could result in substantial AR recovery.'
       ],
       explanation: {
-        title: 'Understanding AR Aging',
+        title: 'What does "due" mean here?',
         points: [
-          'Outstanding amounts include all unpaid invoices beyond due date',
-          'Average delay calculated from original invoice due dates'
+          'Invoice is considered \'due\' if the number of days since issue (\'Age\') is greater than the allowed credit days.',
+          'Only positive amount invoices are shown (debit/receivable, not credits or adjustments).'
         ]
       },
-      followUp: 'Would you like to see detailed payment history for any specific customer?',
+      followUp: 'Want to see more details for a specific party, or summarize all old due invoices by customer?',
       suggestedFollowUps: [
-        'Show payment trends for ABC RETAIL',
-        'Compare AR aging across all customers'
+        'Show party-wise total oldest AR due for collection',
+        'List all invoices due above ₹1 lakh for follow-up'
       ]
     }
   };
@@ -86,6 +113,8 @@ const ConversationalInsights = () => {
   }, [messages]);
 
   const handleQuestionClick = (question) => {
+    const cleanQuestion = question.replace('★ ', '');
+    
     const userMessage = {
       type: 'user',
       content: question
@@ -100,7 +129,7 @@ const ConversationalInsights = () => {
     };
 
     setMessages([...messages, userMessage, botMessage]);
-    setViewMode({ ...viewMode, [botMessage.id]: 'table' });
+    setViewMode({ ...viewMode, [botMessage.id]: 'chart' });
   };
 
   const handleSend = () => {
@@ -120,8 +149,9 @@ const ConversationalInsights = () => {
     };
 
     setMessages([...messages, userMessage, botMessage]);
-    setViewMode({ ...viewMode, [botMessage.id]: 'table' });
+    setViewMode({ ...viewMode, [botMessage.id]: 'chart' });
     setInputValue('');
+    setShowFAQ(false);
   };
 
   const handleKeyPress = (e) => {
@@ -136,160 +166,229 @@ const ConversationalInsights = () => {
 
   return (
     <div className="chat-interface-main" data-testid="conversational-insights-page">
-      <div className="chat-header-bar">
-        <div className="chat-header-buttons">
-          <button className="chat-tab-btn">Dashboard</button>
-          <button className="chat-tab-btn active">Chat</button>
-        </div>
-      </div>
-
-      <div className="chat-messages-area">
-        {messages.length === 0 && (
-          <div className="chat-empty-state">
-            <p className="empty-state-text">Start a conversation by asking a question below</p>
-          </div>
-        )}
-        
-        {messages.map((message, index) => (
-          <div key={index} className={`chat-message-wrapper ${message.type}`}>
-            {message.type === 'user' ? (
-              <div className="user-message-card">
-                {message.content}
+      {messages.length === 0 ? (
+        <div className="conversational-insights-redesign-v2">
+          <div className="curved-background"></div>
+          
+          <div className="insights-content-v2">
+            <div className="alpha-symbol-v2">α</div>
+            <h1 className="insights-title-v2">Business Intelligence, Instant Insights.</h1>
+            
+            <div className="insights-search-bar-v2">
+              <div className="search-icon-circle">
+                <Star size={16} />
               </div>
-            ) : (
-              <div className="bot-response-container">
-                <div className="bot-response-title">
-                  {message.title}
+              <input
+                type="text"
+                className="search-input-v2"
+                placeholder="Ask me anything about your financial data...(try typing @ to mention a specific report type)"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={handleKeyPress}
+                onClick={() => setShowFAQ(true)}
+                onBlur={() => setTimeout(() => setShowFAQ(false), 300)}
+              />
+              <button className="send-button-v2" onClick={handleSend}>
+                <Send size={18} />
+              </button>
+              
+              {showFAQ && (
+                <div className="faq-popup">
+                  {faqSuggestions.map((q, i) => (
+                    <div 
+                      key={i} 
+                      className="faq-item" 
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        setInputValue(q);
+                        setShowFAQ(false);
+                      }}
+                    >
+                      {q}
+                    </div>
+                  ))}
                 </div>
+              )}
+            </div>
+            
+            <div className="questions-carousel">
+              <button className="carousel-arrow left"><ChevronLeft size={20} /></button>
+              <div className="questions-scroll">
+                {preBuiltQuestions.map((question, index) => (
+                  <button key={index} className="question-chip-v2" onClick={() => handleQuestionClick(question)}>
+                    {question}
+                  </button>
+                ))}
+              </div>
+              <button className="carousel-arrow right"><ChevronRight size={20} /></button>
+            </div>
+            
+            <p className="disclaimer-text">OneCap AI Analyst can make mistakes. Check important information</p>
+          </div>
+        </div>
+      ) : (
+        <div className="chat-messages-container-new">
+          <div className="chat-messages-scroll-new">
+            {messages.map((message, index) => (
+              <div key={index} className="message-block">
+                {message.type === 'user' && (
+                  <div className="user-message-bubble-right">
+                    {message.content}
+                  </div>
+                )}
                 
-                <div className="bot-response-content">
-                  <p className="bot-description">{message.description}</p>
-                  
-                  <div className="toggle-buttons-container">
-                    <button 
-                      className={`toggle-mode-btn ${viewMode[message.id] === 'table' ? 'active' : ''}`}
-                      onClick={() => toggleViewMode(message.id, 'table')}
-                    >
-                      <span className="toggle-icon">▦</span> Table
-                    </button>
-                    <button 
-                      className={`toggle-mode-btn ${viewMode[message.id] === 'chart' ? 'active' : ''}`}
-                      onClick={() => toggleViewMode(message.id, 'chart')}
-                    >
-                      <span className="toggle-icon">📊</span> Chart
-                    </button>
-                  </div>
+                {message.type === 'bot' && (
+                  <div className="bot-response-card-new">
+                    <div className="response-title-bar">
+                      {message.title}
+                    </div>
+                    
+                    <div className="response-content-area">
+                      <p className="response-desc-text">{message.description}</p>
+                      
+                      <div className="controls-row">
+                        <button 
+                          className={`view-toggle-btn ${viewMode[message.id] === 'table' ? 'active' : ''}`}
+                          onClick={() => toggleViewMode(message.id, 'table')}
+                        >
+                          <span className="btn-icon-text">≡ Table</span>
+                        </button>
+                        <button 
+                          className={`view-toggle-btn ${viewMode[message.id] === 'chart' ? 'active' : ''}`}
+                          onClick={() => toggleViewMode(message.id, 'chart')}
+                        >
+                          <span className="btn-icon-text">📊 Chart</span>
+                        </button>
+                        <select className="dropdown-select">
+                          <option>Bar</option>
+                          <option>Line</option>
+                          <option>Pie</option>
+                        </select>
+                        <select className="dropdown-select">
+                          <option>X-Rank</option>
+                          <option>Y-Amount</option>
+                        </select>
+                        <select className="dropdown-select">
+                          <option>2 selected</option>
+                          <option>All</option>
+                        </select>
+                      </div>
 
-                  {viewMode[message.id] === 'table' ? (
-                    <div className="response-table-wrapper">
-                      <table className="response-data-table">
-                        <thead>
-                          <tr>
-                            {Object.keys(message.tableData[0]).map((key) => (
-                              <th key={key}>
-                                {key.replace(/([A-Z])/g, ' $1').trim().replace(/^./, str => str.toUpperCase())}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {message.tableData.map((row, i) => (
-                            <tr key={i}>
-                              {Object.values(row).map((val, j) => (
-                                <td key={j}>{val}</td>
+                      {viewMode[message.id] === 'table' ? (
+                        <div className="data-table-scroll">
+                          <table className="invoice-data-table">
+                            <thead>
+                              <tr>
+                                <th>Rank</th>
+                                <th>Party Short Name</th>
+                                <th>Party Name</th>
+                                <th>Doc No</th>
+                                <th>Doc Date</th>
+                                <th>Amount (₹)</th>
+                                <th>Days Overdue</th>
+                                <th>Credit Days</th>
+                                <th>Due Date</th>
+                                <th>Region</th>
+                                <th>Status</th>
+                                <th>Officer</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {message.tableData.map((row, i) => (
+                                <tr key={i}>
+                                  <td>{row.rank}</td>
+                                  <td>{row.partyShortName}</td>
+                                  <td>{row.partyName}</td>
+                                  <td>{row.docNo}</td>
+                                  <td>{row.docDate}</td>
+                                  <td>{row.amount}</td>
+                                  <td>{row.daysOverdue}</td>
+                                  <td>{row.creditDays}</td>
+                                  <td>{row.dueDate}</td>
+                                  <td>{row.region}</td>
+                                  <td>{row.status}</td>
+                                  <td>-</td>
+                                </tr>
                               ))}
-                            </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      ) : (
+                        <div className="chart-display-area">
+                          <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={message.chartData}>
+                              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                              <XAxis dataKey="rank" />
+                              <YAxis />
+                              <Tooltip />
+                              <Legend />
+                              <Bar dataKey="value" fill="#0066CC" name="Amount (₹)" />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      )}
+
+                      <div className="insights-section-block">
+                        <h4 className="section-heading">Key Insights:</h4>
+                        <ul className="bullet-list">
+                          {message.keyInsights.map((insight, i) => (
+                            <li key={i}>{insight}</li>
                           ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="response-chart-wrapper">
-                      <ResponsiveContainer width="100%" height={250}>
-                        <BarChart data={message.chartData}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey={Object.keys(message.chartData[0])[0]} />
-                          <YAxis />
-                          <Tooltip />
-                          <Bar dataKey="value" fill="#003DA5" />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  )}
+                        </ul>
+                      </div>
 
-                  {message.keyInsights && (
-                    <div className="insights-block">
-                      <h4 className="insights-heading">Key Insights:</h4>
-                      <ul className="insights-bullet-list">
-                        {message.keyInsights.map((insight, i) => (
-                          <li key={i}>{insight}</li>
+                      <div className="explanation-section-block">
+                        <h4 className="section-heading">{message.explanation.title}</h4>
+                        <ul className="bullet-list">
+                          {message.explanation.points.map((point, i) => (
+                            <li key={i}>{point}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <p className="followup-text">{message.followUp}</p>
+
+                      <div className="suggested-section">
+                        <h5 className="suggested-label">Suggested follow-ups:</h5>
+                        {message.suggestedFollowUps.map((followup, i) => (
+                          <div key={i} className="suggested-link" onClick={() => setInputValue(followup)}>
+                            {followup} ↗
+                          </div>
                         ))}
-                      </ul>
-                    </div>
-                  )}
+                      </div>
 
-                  {message.explanation && (
-                    <div className="explanation-block">
-                      <h4 className="explanation-heading">{message.explanation.title}</h4>
-                      <ul className="explanation-bullet-list">
-                        {message.explanation.points.map((point, i) => (
-                          <li key={i}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {message.followUp && (
-                    <p className="followup-question">{message.followUp}</p>
-                  )}
-
-                  {message.suggestedFollowUps && (
-                    <div className="suggested-followups-block">
-                      <h5 className="followups-label">Suggested follow-ups:</h5>
-                      {message.suggestedFollowUps.map((followup, i) => (
-                        <div key={i} className="followup-link-item" onClick={() => setInputValue(followup)}>
-                          {followup} ↗
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="ar-questions-card">
-                    <h4 className="ar-card-title">AR Questions</h4>
-                    <div className="ar-questions-items">
-                      {arQuestions.map((q, i) => (
-                        <div key={i} className="ar-question-row" onClick={() => handleQuestionClick(q)}>
-                          <TrendingUp size={16} className="ar-icon" /> {q}
-                        </div>
-                      ))}
+                      <div className="action-icons">
+                        <button className="icon-btn" title="Thumbs up"><ThumbsUp size={16} /></button>
+                        <button className="icon-btn" title="Thumbs down"><ThumbsDown size={16} /></button>
+                        <button className="icon-btn" title="Copy"><Copy size={16} /></button>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
-            )}
+            ))}
+            <div ref={messagesEndRef} />
           </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
 
-      <div className="chat-input-fixed-container">
-        <div className="chat-input-box">
-          <Star className="input-icon-star" size={20} />
-          <input
-            type="text"
-            placeholder="Ask anything about your financial data"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={handleKeyPress}
-            className="chat-text-input"
-          />
-          <button className="send-icon-button" onClick={handleSend}>
-            <Send size={18} />
-          </button>
+          <div className="chat-input-fixed-bottom">
+            <div className="input-wrapper-bottom">
+              <Star className="star-icon-input" size={18} />
+              <input
+                type="text"
+                placeholder="Ask anything about your financial data..."
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="text-input-bottom"
+              />
+              <button className="send-btn-bottom" onClick={handleSend}>
+                <Send size={18} />
+              </button>
+            </div>
+            <p className="disclaimer-bottom">OneCap AI Analyst can make mistakes. Check important information</p>
+          </div>
         </div>
-        <button className="ar-main-button">☆ AR</button>
-        <p className="bottom-disclaimer">OneCap AI Analyst can make mistakes. Check important information</p>
-      </div>
+      )}
     </div>
   );
 };
