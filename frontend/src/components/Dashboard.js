@@ -422,55 +422,19 @@ const Dashboard = () => {
           <div className="chart-header">
             <h3 className="chart-title">Revenue Source Distribution</h3>
           </div>
-          <div className="chart-container" style={{ height: '320px' }}>
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="chart-container" style={{ height: '320px', display: 'flex', alignItems: 'center' }}>
+            <ResponsiveContainer width="55%" height="100%">
               <PieChart>
                 <Pie
                   data={revenueSourceData}
-                  cx="40%"
+                  cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={90}
+                  innerRadius={70}
+                  outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
-                  label={({ cx, cy, midAngle, innerRadius, outerRadius, value, name }) => {
-                    const RADIAN = Math.PI / 180;
-                    const radius = outerRadius + 40;
-                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-                    
-                    return (
-                      <g>
-                        <text 
-                          x={x} 
-                          y={y - 8} 
-                          fill="#1e293b" 
-                          textAnchor={x > cx ? 'start' : 'end'} 
-                          dominantBaseline="central"
-                          fontSize="13"
-                          fontWeight="700"
-                        >
-                          {name}
-                        </text>
-                        <text 
-                          x={x} 
-                          y={y + 8} 
-                          fill="#64748b" 
-                          textAnchor={x > cx ? 'start' : 'end'} 
-                          dominantBaseline="central"
-                          fontSize="13"
-                          fontWeight="600"
-                        >
-                          ₹{value}L
-                        </text>
-                      </g>
-                    );
-                  }}
-                  labelLine={{
-                    stroke: '#94a3b8',
-                    strokeWidth: 1.2,
-                    strokeDasharray: '3 3'
-                  }}
+                  label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
+                  labelLine={false}
                 >
                   {revenueSourceData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
@@ -481,12 +445,55 @@ const Dashboard = () => {
                   contentStyle={{ 
                     backgroundColor: '#fff', 
                     border: '1px solid #e2e8f0',
-                    borderRadius: '6px',
-                    padding: '8px 12px'
+                    borderRadius: '8px',
+                    padding: '10px 14px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                   }}
                 />
               </PieChart>
             </ResponsiveContainer>
+            <div style={{ 
+              width: '45%', 
+              paddingLeft: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px'
+            }}>
+              {revenueSourceData.map((entry, index) => (
+                <div key={index} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '10px 12px',
+                  backgroundColor: '#f8fafc',
+                  borderRadius: '8px',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{
+                      width: '16px',
+                      height: '16px',
+                      backgroundColor: entry.color,
+                      borderRadius: '4px'
+                    }} />
+                    <span style={{ 
+                      fontSize: '14px', 
+                      fontWeight: '600',
+                      color: '#1e293b'
+                    }}>
+                      {entry.name}
+                    </span>
+                  </div>
+                  <span style={{ 
+                    fontSize: '15px', 
+                    fontWeight: '700',
+                    color: '#0f172a'
+                  }}>
+                    ₹{entry.value}L
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
