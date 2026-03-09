@@ -3070,3 +3070,165 @@
     max-width: 95%;
   }
 }
+
+/* ===== SUMMARY OF DATA - EXCEL TABLE ===== */
+.summary-data-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  margin-top: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.panel-header-excel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: #f8fafc;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.panel-title-excel {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.download-excel-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.download-excel-btn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.excel-table-container {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 600px;
+}
+
+.excel-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  min-width: 1400px;
+}
+
+.excel-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #1e3a5f;
+}
+
+.excel-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: white;
+  border: 1px solid #334e68;
+  background: #1e3a5f;
+  white-space: nowrap;
+}
+
+.th-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.filter-icon {
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.filter-icon:hover {
+  color: white;
+}
+
+.excel-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.excel-table tbody tr:nth-child(odd) {
+  background: white;
+}
+
+.excel-table tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.excel-table tbody tr:hover {
+  background: #e0f2fe;
+}
+
+.excel-table tbody tr.empty-row {
+  background: #f1f5f9;
+}
+
+.excel-table tbody tr.empty-row:hover {
+  background: #e2e8f0;
+}
+
+.excel-table td {
+  padding: 10px 16px;
+  border: 1px solid #e5e7eb;
+  color: #1e293b;
+}
+
+.date-column {
+  font-weight: 500;
+  color: #0f172a;
+  background: #fef3c7;
+  white-space: nowrap;
+}
+
+.number-column {
+  text-align: right;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-weight: 500;
+}
+
+.text-column {
+  color: #64748b;
+  text-align: center;
+}
+
+.excel-table-container::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+.excel-table-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.excel-table-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 6px;
+}
+
+.excel-table-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
