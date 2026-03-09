@@ -12,7 +12,7 @@ const salesData = [
   { date: '06.02.2026', totalSales: 1.793636, cod: 0.237560, razorpayCommission: 0.007545, razorpaySettlement: 0.010742, directCollection: null, giftCard: null, rto: 0.237118, exchange: 0.07088, excessAmtRefund: null, balance: 0.152374 },
   { date: '07.02.2026', totalSales: 2.321524, cod: 0.578096, razorpayCommission: 0.011955, razorpaySettlement: 0.014747, directCollection: 0.009800, giftCard: null, rto: 0.165018, exchange: 0.07457, excessAmtRefund: null, balance: 0.283516 },
   { date: '08.02.2026', totalSales: null, cod: null, razorpayCommission: null, razorpaySettlement: null, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: null },
-  { date: '09.02.2026', totalSales: 4.45 3887, cod: 0.935536, razorpayCommission: 0.044093, razorpaySettlement: 0.032433, directCollection: null, giftCard: null, rto: 0.043940, exchange: 0.04598, excessAmtRefund: null, balance: 0.104048 },
+  { date: '09.02.2026', totalSales: 4.453887, cod: 0.935536, razorpayCommission: 0.044093, razorpaySettlement: 0.032433, directCollection: null, giftCard: null, rto: 0.043940, exchange: 0.04598, excessAmtRefund: null, balance: 0.104048 },
   { date: '10.02.2026', totalSales: 1.512418, cod: 0.408549, razorpayCommission: 0.009350, razorpaySettlement: 0.008730, directCollection: null, giftCard: null, rto: 0.159390, exchange: 0.01795, excessAmtRefund: null, balance: 0.049942 },
   { date: '11.02.2026', totalSales: 2.492546, cod: 0.502827, razorpayCommission: 0.015911, razorpaySettlement: 0.016834, directCollection: 0.008000, giftCard: 0.025859, rto: 0.104930, exchange: 0.06485, excessAmtRefund: null, balance: 0.086869 },
   { date: '12.02.2026', totalSales: 3.930217, cod: 0.786834, razorpayCommission: 0.032357, razorpaySettlement: 0.026549, directCollection: null, giftCard: null, rto: 0.159318, exchange: 0.08502, excessAmtRefund: null, balance: 0.216261 },
@@ -27,7 +27,7 @@ const salesData = [
   { date: '21.02.2026', totalSales: 2.777047, cod: null, razorpayCommission: 0.015973, razorpaySettlement: 0.019100, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: 0.838460 },
   { date: '22.02.2026', totalSales: null, cod: null, razorpayCommission: null, razorpaySettlement: null, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: null },
   { date: '23.02.2026', totalSales: 5.283830, cod: null, razorpayCommission: 0.028785, razorpaySettlement: 0.023506, directCollection: null, giftCard: null, rto: null, exchange: 0.02598, excessAmtRefund: null, balance: 1.995190 },
-  { date: '24.02.2026', totalSales: 2.686050, cod: null, razorpayCommission: 0.006130, razorpaySettlement: 0.005917, directCollection: null, giftCard: null, rto: null, exchange: 0.02744, excessAmtRefund: null, balance: 1.98-6430 },
+  { date: '24.02.2026', totalSales: 2.686050, cod: null, razorpayCommission: 0.006130, razorpaySettlement: 0.005917, directCollection: null, giftCard: null, rto: null, exchange: 0.02744, excessAmtRefund: null, balance: 1.986430 },
   { date: '25.02.2026', totalSales: null, cod: null, razorpayCommission: null, razorpaySettlement: null, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: null },
   { date: '26.02.2026', totalSales: null, cod: null, razorpayCommission: null, razorpaySettlement: null, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: null },
   { date: '27.02.2026', totalSales: null, cod: null, razorpayCommission: null, razorpaySettlement: null, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: null },
@@ -35,20 +35,26 @@ const salesData = [
 ];
 
 const dailySalesChartData = [
-  { date: '02.02', sales: 3.85 },
-  { date: '03.02', sales: 2.50 },
-  { date: '04.02', sales: 1.71 },
-  { date: '05.02', sales: 2.06 },
-  { date: '06.02', sales: 1.79 },
-  { date: '07.02', sales: 2.32 },
-  { date: '09.02', sales: 4.45 },
-  { date: '10.02', sales: 1.52 },
-  { date: '11.02', sales: 2.49 },
-  { date: '12.02', sales: 3.93 },
-  { date: '13.02', sales: 2.62 },
-  { date: '14.02', sales: 3.12 },
-  { date: '16.02', sales: 7.06 },
-  { date: '17.02', sales: 4.29 },
+  { date: '02.02', sales: 3.365756 },
+  { date: '03.02', sales: 2.506459 },
+  { date: '04.02', sales: 1.712818 },
+  { date: '05.02', sales: 2.063852 },
+  { date: '06.02', sales: 1.793636 },
+  { date: '07.02', sales: 2.321524 },
+  { date: '09.02', sales: 4.453887 },
+  { date: '10.02', sales: 1.512418 },
+  { date: '11.02', sales: 2.492546 },
+  { date: '12.02', sales: 3.930217 },
+  { date: '13.02', sales: 2.624500 },
+  { date: '14.02', sales: 3.121857 },
+  { date: '16.02', sales: 7.061620 },
+  { date: '17.02', sales: 4.287850 },
+  { date: '18.02', sales: 2.451900 },
+  { date: '19.02', sales: 2.048100 },
+  { date: '20.02', sales: 2.474980 },
+  { date: '21.02', sales: 2.777047 },
+  { date: '23.02', sales: 5.283830 },
+  { date: '24.02', sales: 2.686050 },
 ];
 
 const paymentModeData = [
@@ -417,21 +423,42 @@ const Dashboard = () => {
               <PieChart>
                 <Pie
                   data={revenueSourceData}
-                  cx="50%"
+                  cx="45%"
                   cy="50%"
                   innerRadius={60}
-                  outerRadius={100}
+                  outerRadius={95}
                   fill="#8884d8"
                   dataKey="value"
-                  label={({ value }) => `₹${value}L`}
-                  labelLine={true}
+                  label={({ cx, cy, midAngle, innerRadius, outerRadius, value, index }) => {
+                    const RADIAN = Math.PI / 180;
+                    const radius = outerRadius + 30;
+                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                    return (
+                      <text 
+                        x={x} 
+                        y={y} 
+                        fill="#374151" 
+                        textAnchor={x > cx ? 'start' : 'end'} 
+                        dominantBaseline="central"
+                        fontSize="13"
+                        fontWeight="600"
+                      >
+                        ₹{value}L
+                      </text>
+                    );
+                  }}
+                  labelLine={{
+                    stroke: '#9ca3af',
+                    strokeWidth: 1
+                  }}
                 >
                   {revenueSourceData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip />
-                <Legend layout="vertical" align="right" verticalAlign="middle" />
+                <Legend layout="vertical" align="right" verticalAlign="middle" wrapperStyle={{ paddingLeft: '20px' }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
