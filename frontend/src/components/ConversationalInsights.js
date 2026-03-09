@@ -434,7 +434,48 @@ const ConversationalInsights = () => {
   const handleSend = () => {
     if (!inputValue.trim()) return;
     
-    const response = mockResponses[inputValue] || mockResponses['Top 10 due invoices that can be collected?'];
+    // Check if the question exists in mockResponses, otherwise provide a default response
+    let response;
+    if (mockResponses[inputValue]) {
+      response = mockResponses[inputValue];
+    } else {
+      // Default response for any custom question
+      response = {
+        title: 'General Financial Query Response',
+        description: 'Here\'s an analysis based on your February 2026 data:',
+        tableData: salesData.slice(0, 10).map(day => ({
+          date: day.date,
+          totalSales: formatCurrency(day.totalSales),
+          cod: formatCurrency(day.cod),
+          razorpaySett: formatCurrency(day.razorpaySettlement),
+          rto: formatCurrency(day.rto),
+          balance: formatCurrency(day.balance)
+        })),
+        chartData: salesData.slice(0, 10).map(day => ({
+          date: day.date.substring(0, 5),
+          value: (day.totalSales / 100000)
+        })),
+        keyInsights: [
+          `Based on your question about "${inputValue}", here are relevant insights:`,
+          `Total sales for February: ${formatLakhs(totalSales)}`,
+          `Total COD collections: ${formatLakhs(totalCOD)}`,
+          `Total outstanding balance: ${formatLakhs(totalBalance)}`
+        ],
+        explanation: {
+          title: 'Data Summary',
+          points: [
+            'This response shows your complete financial data for February 2026.',
+            'For specific analysis, try one of the suggested questions below.'
+          ]
+        },
+        followUp: 'Would you like more specific analysis?',
+        suggestedFollowUps: [
+          '★ Total Sales Analysis',
+          '★ COD vs Razorpay',
+          '★ Outstanding Balance'
+        ]
+      };
+    }
     
     const userMessage = {
       type: 'user',
@@ -578,35 +619,19 @@ const ConversationalInsights = () => {
                           <table className="invoice-data-table">
                             <thead>
                               <tr>
-                                <th>Rank</th>
-                                <th>Party Short Name</th>
-                                <th>Party Name</th>
-                                <th>Doc No</th>
-                                <th>Doc Date</th>
-                                <th>Amount (₹)</th>
-                                <th>Days Overdue</th>
-                                <th>Credit Days</th>
-                                <th>Due Date</th>
-                                <th>Region</th>
-                                <th>Status</th>
-                                <th>Officer</th>
+                                {message.tableData && message.tableData.length > 0 && 
+                                  Object.keys(message.tableData[0]).map((key, i) => (
+                                    <th key={i}>{key.charAt(0).toUpperCase() + key.slice(1)}</th>
+                                  ))
+                                }
                               </tr>
                             </thead>
                             <tbody>
-                              {message.tableData.map((row, i) => (
+                              {message.tableData && message.tableData.map((row, i) => (
                                 <tr key={i}>
-                                  <td>{row.rank}</td>
-                                  <td>{row.partyShortName}</td>
-                                  <td>{row.partyName}</td>
-                                  <td>{row.docNo}</td>
-                                  <td>{row.docDate}</td>
-                                  <td>{row.amount}</td>
-                                  <td>{row.daysOverdue}</td>
-                                  <td>{row.creditDays}</td>
-                                  <td>{row.dueDate}</td>
-                                  <td>{row.region}</td>
-                                  <td>{row.status}</td>
-                                  <td>-</td>
+                                  {Object.values(row).map((value, j) => (
+                                    <td key={j}>{value}</td>
+                                  ))}
                                 </tr>
                               ))}
                             </tbody>
@@ -617,11 +642,25 @@ const ConversationalInsights = () => {
                           <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={message.chartData}>
                               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                              <XAxis dataKey="rank" />
+                              <XAxis 
+                                dataKey={message.chartData && message.chartData[0] ? Object.keys(message.chartData[0])[0] : 'date'} 
+                                tick={{ fontSize: 12 }}
+                              />
                               <YAxis />
                               <Tooltip />
                               <Legend />
-                              <Bar dataKey="value" fill="#0066CC" name="Amount (₹)" />
+                              {message.chartData && message.chartData.length > 0 && 
+                                Object.keys(message.chartData[0])
+                                  .filter(key => key !== 'date' && key !== 'name')
+                                  .map((key, i) => (
+                                    <Bar 
+                                      key={i} 
+                                      dataKey={key} 
+                                      fill={i === 0 ? '#0066CC' : i === 1 ? '#10b981' : '#f59e0b'} 
+                                      name={key.charAt(0).toUpperCase() + key.slice(1)} 
+                                    />
+                                  ))
+                              }
                             </BarChart>
                           </ResponsiveContainer>
                         </div>
