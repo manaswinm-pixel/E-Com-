@@ -433,36 +433,58 @@ const Dashboard = () => {
                   outerRadius={90}
                   fill="#8884d8"
                   dataKey="value"
-                  label={({ cx, cy, midAngle, innerRadius, outerRadius, value }) => {
+                  label={({ cx, cy, midAngle, innerRadius, outerRadius, value, name }) => {
                     const RADIAN = Math.PI / 180;
-                    const radius = outerRadius + 35;
+                    const radius = outerRadius + 40;
                     const x = cx + radius * Math.cos(-midAngle * RADIAN);
                     const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                    
                     return (
-                      <text 
-                        x={x} 
-                        y={y} 
-                        fill="#1e293b" 
-                        textAnchor={x > cx ? 'start' : 'end'} 
-                        dominantBaseline="central"
-                        fontSize="14"
-                        fontWeight="600"
-                      >
-                        ₹{value}L
-                      </text>
+                      <g>
+                        <text 
+                          x={x} 
+                          y={y - 8} 
+                          fill="#1e293b" 
+                          textAnchor={x > cx ? 'start' : 'end'} 
+                          dominantBaseline="central"
+                          fontSize="13"
+                          fontWeight="700"
+                        >
+                          {name}
+                        </text>
+                        <text 
+                          x={x} 
+                          y={y + 8} 
+                          fill="#64748b" 
+                          textAnchor={x > cx ? 'start' : 'end'} 
+                          dominantBaseline="central"
+                          fontSize="13"
+                          fontWeight="600"
+                        >
+                          ₹{value}L
+                        </text>
+                      </g>
                     );
                   }}
                   labelLine={{
-                    stroke: '#64748b',
-                    strokeWidth: 1.5
+                    stroke: '#94a3b8',
+                    strokeWidth: 1.2,
+                    strokeDasharray: '3 3'
                   }}
                 >
                   {revenueSourceData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip />
-                <Legend layout="vertical" align="right" verticalAlign="middle" wrapperStyle={{ paddingLeft: '30px' }} />
+                <Tooltip 
+                  formatter={(value) => `₹${value}L`}
+                  contentStyle={{ 
+                    backgroundColor: '#fff', 
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '6px',
+                    padding: '8px 12px'
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
