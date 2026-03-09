@@ -39,10 +39,11 @@ const paymentModeData = [
 ];
 
 const revenueSourceData = [
-  { name: 'Prepaid Orders', value: 4850, color: '#3b82f6' },
-  { name: 'COD Orders', value: 2450, color: '#10b981' },
-  { name: 'Gift Card', value: 980, color: '#f59e0b' },
-  { name: 'Direct Bank', value: 720, color: '#8b5cf6' },
+  { name: 'Zepto', value: 1100, color: '#003DA5' },
+  { name: 'Oswaal', value: 304, color: '#6B4CE6' },
+  { name: 'Test User', value: 200, color: '#00BCD4' },
+  { name: 'Creative', value: 90, color: '#9E9E9E' },
+  { name: 'IKSB', value: 90, color: '#D81B60' },
 ];
 
 const exceptionData = [
@@ -205,7 +206,7 @@ const Dashboard = () => {
                   tick={{ fontSize: 12 }} 
                 />
                 <Tooltip />
-                <Bar dataKey="orders" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="orders" fill="#66B3FF" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -227,7 +228,7 @@ const Dashboard = () => {
                   tick={{ fontSize: 12 }} 
                 />
                 <Tooltip />
-                <Line type="monotone" dataKey="amount" stroke="#10b981" strokeWidth={3} dot={{ fill: '#10b981', r: 5 }} />
+                <Line type="monotone" dataKey="amount" stroke="#66B3FF" strokeWidth={2} dot={{ fill: '#66B3FF', r: 5 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
