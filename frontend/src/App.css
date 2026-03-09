@@ -31,7 +31,7 @@
   padding: 24px 16px;
 }
 
-/* New Logo Design - Complete logo */
+/* New Logo Design - High-quality SVG */
 .logo-container-new {
   display: flex;
   align-items: center;
@@ -47,10 +47,11 @@
   height: 45px;
   object-fit: contain;
   transition: all 0.3s ease;
+  background: transparent;
 }
 
 .sidebar.collapsed .logo-full-image {
-  height: 35px;
+  height: 38px;
 }
 
 .sidebar.expanded .logo-full-image {
@@ -1122,7 +1123,7 @@
 }
 
 .dashboard-header-logo {
-  height: 40px;
+  height: 45px;
   width: auto;
   object-fit: contain;
   background: transparent;

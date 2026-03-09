@@ -11,8 +11,8 @@ import NotificationContainer from './components/Notifications';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-// OneCap Logo URL - Complete logo with α symbol
-const LOGO_URL = "https://customer-assets.emergentagent.com/job_data-convo-poc/artifacts/jyutwofh_Screenshot%202026-03-07%20233634.png";
+// OneCap Logo URL - High-quality SVG
+const LOGO_URL = "https://customer-assets.emergentagent.com/job_data-convo-poc/artifacts/rmuu7ljf_OneCap%20logo%20Blue.svg";
 
 function AppContent() {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);

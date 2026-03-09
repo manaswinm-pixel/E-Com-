@@ -70,7 +70,7 @@ const Dashboard = () => {
       <header className="dashboard-header-with-dropdown">
         <div className="header-logo-and-title">
           <img 
-            src="https://customer-assets.emergentagent.com/job_data-convo-poc/artifacts/t5sbnr1s_OneCap%20logo%20Blue%202%20%281%29.png" 
+            src="https://customer-assets.emergentagent.com/job_data-convo-poc/artifacts/rmuu7ljf_OneCap%20logo%20Blue.svg" 
             alt="OneCap Logo" 
             className="dashboard-header-logo"
           />
