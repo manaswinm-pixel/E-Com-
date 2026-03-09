@@ -162,8 +162,8 @@ const DataPage = ({ addNotification }) => {
 
   const getStatusDisplay = (status) => {
     const config = {
-      success: { text: 'Success', color: '#d1fae5', textColor: '#065f46' },
-      queued: { text: 'Queued', color: '#fef3c7', textColor: '#92400e' },
+      success: { text: 'Fetched', color: '#d1fae5', textColor: '#065f46' },
+      queued: { text: 'Pending', color: '#fef3c7', textColor: '#92400e' },
     };
     return config[status];
   };
