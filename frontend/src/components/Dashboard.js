@@ -2,32 +2,41 @@ import { useState } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { TrendingUp, TrendingDown, Package, DollarSign, AlertTriangle, CheckCircle, ChevronDown, Download, Filter } from 'lucide-react';
 
-// Exact data from Excel (converted to lakhs with precise decimals)
+// Helper function to format numbers in Indian style with commas
+const formatIndianNumber = (num) => {
+  if (num === null || num === undefined || num === 0) return '-';
+  return new Intl.NumberFormat('en-IN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(num);
+};
+
+// Exact data from Excel in RUPEES (not lakhs)
 const salesData = [
   { date: '01.02.2026', totalSales: null, cod: null, razorpayCommission: null, razorpaySettlement: null, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: null },
-  { date: '02.02.2026', totalSales: 3.365756, cod: 0.535291, razorpayCommission: 0.033448, razorpaySettlement: 0.030242, directCollection: null, giftCard: null, rto: 0.189965, exchange: 0.06594, excessAmtRefund: null, balance: 0 },
-  { date: '03.02.2026', totalSales: 2.506459, cod: 0.742955, razorpayCommission: 0.019093, razorpaySettlement: 0.016828, directCollection: null, giftCard: null, rto: 0.198120, exchange: 0.07126, excessAmtRefund: null, balance: 0 },
-  { date: '04.02.2026', totalSales: 1.712818, cod: 0.292180, razorpayCommission: 0.016335, razorpaySettlement: 0.012078, directCollection: null, giftCard: null, rto: 0.151840, exchange: 0.02977, excessAmtRefund: null, balance: 0.01408 },
-  { date: '05.02.2026', totalSales: 2.063852, cod: 0.456620, razorpayCommission: 0.015015, razorpaySettlement: 0.013562, directCollection: null, giftCard: null, rto: 0.170840, exchange: 0.02196, excessAmtRefund: null, balance: 0.09951 },
-  { date: '06.02.2026', totalSales: 1.793636, cod: 0.237560, razorpayCommission: 0.007545, razorpaySettlement: 0.010742, directCollection: null, giftCard: null, rto: 0.237118, exchange: 0.07088, excessAmtRefund: null, balance: 0.152374 },
-  { date: '07.02.2026', totalSales: 2.321524, cod: 0.578096, razorpayCommission: 0.011955, razorpaySettlement: 0.014747, directCollection: 0.009800, giftCard: null, rto: 0.165018, exchange: 0.07457, excessAmtRefund: null, balance: 0.283516 },
+  { date: '02.02.2026', totalSales: 336575.60, cod: 53529.10, razorpayCommission: 3344.75, razorpaySettlement: 3024.19, directCollection: null, giftCard: null, rto: 18996.50, exchange: 6594.00, excessAmtRefund: null, balance: 0.00 },
+  { date: '03.02.2026', totalSales: 250645.90, cod: 74295.50, razorpayCommission: 1909.25, razorpaySettlement: 1682.75, directCollection: null, giftCard: null, rto: 19812.00, exchange: 7126.00, excessAmtRefund: null, balance: 0.00 },
+  { date: '04.02.2026', totalSales: 171281.80, cod: 29218.00, razorpayCommission: 1633.50, razorpaySettlement: 1207.79, directCollection: null, giftCard: null, rto: 15184.00, exchange: 2977.00, excessAmtRefund: null, balance: 1408.00 },
+  { date: '05.02.2026', totalSales: 206385.20, cod: 45662.00, razorpayCommission: 1501.50, razorpaySettlement: 1356.20, directCollection: null, giftCard: null, rto: 17084.00, exchange: 2196.00, excessAmtRefund: null, balance: 9951.00 },
+  { date: '06.02.2026', totalSales: 179363.60, cod: 23756.00, razorpayCommission: 754.50, razorpaySettlement: 1074.20, directCollection: null, giftCard: null, rto: 23711.80, exchange: 7088.00, excessAmtRefund: null, balance: 15237.00 },
+  { date: '07.02.2026', totalSales: 232152.40, cod: 57809.60, razorpayCommission: 1195.50, razorpaySettlement: 1474.70, directCollection: 980.00, giftCard: null, rto: 16501.80, exchange: 7457.00, excessAmtRefund: null, balance: 28351.60 },
   { date: '08.02.2026', totalSales: null, cod: null, razorpayCommission: null, razorpaySettlement: null, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: null },
-  { date: '09.02.2026', totalSales: 4.453887, cod: 0.935536, razorpayCommission: 0.044093, razorpaySettlement: 0.032433, directCollection: null, giftCard: null, rto: 0.043940, exchange: 0.04598, excessAmtRefund: null, balance: 0.104048 },
-  { date: '10.02.2026', totalSales: 1.512418, cod: 0.408549, razorpayCommission: 0.009350, razorpaySettlement: 0.008730, directCollection: null, giftCard: null, rto: 0.159390, exchange: 0.01795, excessAmtRefund: null, balance: 0.049942 },
-  { date: '11.02.2026', totalSales: 2.492546, cod: 0.502827, razorpayCommission: 0.015911, razorpaySettlement: 0.016834, directCollection: 0.008000, giftCard: 0.025859, rto: 0.104930, exchange: 0.06485, excessAmtRefund: null, balance: 0.086869 },
-  { date: '12.02.2026', totalSales: 3.930217, cod: 0.786834, razorpayCommission: 0.032357, razorpaySettlement: 0.026549, directCollection: null, giftCard: null, rto: 0.159318, exchange: 0.08502, excessAmtRefund: null, balance: 0.216261 },
-  { date: '13.02.2026', totalSales: 2.624500, cod: 0.589434, razorpayCommission: 0.020287, razorpaySettlement: 0.018557, directCollection: null, giftCard: 0.030000, rto: 0.084100, exchange: 0.02400, excessAmtRefund: null, balance: 0.012081 },
-  { date: '14.02.2026', totalSales: 3.121857, cod: 0.950840, razorpayCommission: 0.029357, razorpaySettlement: 0.024952, directCollection: null, giftCard: 0.046470, rto: 0.096400, exchange: 0.140940, excessAmtRefund: null, balance: 0.505642 },
+  { date: '09.02.2026', totalSales: 445388.70, cod: 93559.60, razorpayCommission: 4409.25, razorpaySettlement: 3243.35, directCollection: null, giftCard: null, rto: 4394.00, exchange: 4598.00, excessAmtRefund: null, balance: 10404.00 },
+  { date: '10.02.2026', totalSales: 151241.80, cod: 40854.99, razorpayCommission: 935.07, razorpaySettlement: 873.06, directCollection: null, giftCard: null, rto: 15939.00, exchange: 1795.00, excessAmtRefund: null, balance: 4994.10 },
+  { date: '11.02.2026', totalSales: 249254.60, cod: 50282.00, razorpayCommission: 1591.10, razorpaySettlement: 1683.40, directCollection: 800.00, giftCard: 2588.00, rto: 10493.00, exchange: 6485.00, excessAmtRefund: null, balance: 8686.90 },
+  { date: '12.02.2026', totalSales: 393021.70, cod: 78683.40, razorpayCommission: 3235.75, razorpaySettlement: 2654.90, directCollection: null, giftCard: null, rto: 15931.80, exchange: 8502.00, excessAmtRefund: null, balance: 21626.10 },
+  { date: '13.02.2026', totalSales: 262450.00, cod: 58943.40, razorpayCommission: 2028.75, razorpaySettlement: 1855.70, directCollection: null, giftCard: 3999.00, rto: 8407.00, exchange: 2398.00, excessAmtRefund: null, balance: 1148.00 },
+  { date: '14.02.2026', totalSales: 312185.70, cod: 95078.00, razorpayCommission: 2835.75, razorpaySettlement: 2497.50, directCollection: null, giftCard: null, rto: 9642.00, exchange: 14094.00, excessAmtRefund: null, balance: 50564.10 },
   { date: '15.02.2026', totalSales: null, cod: null, razorpayCommission: null, razorpaySettlement: null, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: null },
-  { date: '16.02.2026', totalSales: 7.061620, cod: 0.031870, razorpayCommission: 0.070165, razorpaySettlement: 0.062853, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: 0.695980 },
-  { date: '17.02.2026', totalSales: 4.287850, cod: 0.125350, razorpayCommission: 0.021875, razorpaySettlement: 0.018464, directCollection: null, giftCard: null, rto: null, exchange: 0.106920, excessAmtRefund: null, balance: 0.117490 },
-  { date: '18.02.2026', totalSales: 2.451900, cod: null, razorpayCommission: 0.015475, razorpaySettlement: 0.015329, directCollection: null, giftCard: null, rto: null, exchange: 0.01495, excessAmtRefund: null, balance: 0.893370 },
-  { date: '19.02.2026', totalSales: 2.048100, cod: null, razorpayCommission: 0.015435, razorpaySettlement: 0.013978, directCollection: null, giftCard: null, rto: null, exchange: 0.07275, excessAmtRefund: null, balance: 0.558120 },
-  { date: '20.02.2026', totalSales: 2.474980, cod: null, razorpayCommission: 0.015260, razorpaySettlement: 0.017904, directCollection: null, giftCard: null, rto: null, exchange: 0.07395, excessAmtRefund: null, balance: 0.603920 },
-  { date: '21.02.2026', totalSales: 2.777047, cod: null, razorpayCommission: 0.015973, razorpaySettlement: 0.019100, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: 0.838460 },
+  { date: '16.02.2026', totalSales: 706162.00, cod: 3187.00, razorpayCommission: 7016.50, razorpaySettlement: 6285.30, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: 69598.00 },
+  { date: '17.02.2026', totalSales: 428785.00, cod: 12535.00, razorpayCommission: 2187.50, razorpaySettlement: 1864.10, directCollection: null, giftCard: null, rto: null, exchange: 10692.00, excessAmtRefund: null, balance: 11774.60 },
+  { date: '18.02.2026', totalSales: 245190.00, cod: null, razorpayCommission: 1547.50, razorpaySettlement: 1533.30, directCollection: null, giftCard: null, rto: null, exchange: 1495.00, excessAmtRefund: null, balance: 89337.30 },
+  { date: '19.02.2026', totalSales: 204810.00, cod: null, razorpayCommission: 1543.50, razorpaySettlement: 1397.80, directCollection: null, giftCard: null, rto: null, exchange: 7275.00, excessAmtRefund: null, balance: 55812.00 },
+  { date: '20.02.2026', totalSales: 247498.00, cod: null, razorpayCommission: 1526.00, razorpaySettlement: 1790.40, directCollection: null, giftCard: null, rto: null, exchange: 7395.00, excessAmtRefund: null, balance: 60328.00 },
+  { date: '21.02.2026', totalSales: 277704.70, cod: null, razorpayCommission: 1597.40, razorpaySettlement: 1910.60, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: 83846.40 },
   { date: '22.02.2026', totalSales: null, cod: null, razorpayCommission: null, razorpaySettlement: null, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: null },
-  { date: '23.02.2026', totalSales: 5.283830, cod: null, razorpayCommission: 0.028785, razorpaySettlement: 0.023506, directCollection: null, giftCard: null, rto: null, exchange: 0.02598, excessAmtRefund: null, balance: 1.995190 },
-  { date: '24.02.2026', totalSales: 2.686050, cod: null, razorpayCommission: 0.006130, razorpaySettlement: 0.005917, directCollection: null, giftCard: null, rto: null, exchange: 0.02744, excessAmtRefund: null, balance: 1.986430 },
+  { date: '23.02.2026', totalSales: 528383.50, cod: null, razorpayCommission: 2878.50, razorpaySettlement: 2353.60, directCollection: null, giftCard: null, rto: null, exchange: 2598.00, excessAmtRefund: null, balance: 199519.00 },
+  { date: '24.02.2026', totalSales: 268605.00, cod: null, razorpayCommission: 613.00, razorpaySettlement: 613.10, directCollection: null, giftCard: null, rto: null, exchange: 2744.00, excessAmtRefund: null, balance: 198642.50 },
   { date: '25.02.2026', totalSales: null, cod: null, razorpayCommission: null, razorpaySettlement: null, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: null },
   { date: '26.02.2026', totalSales: null, cod: null, razorpayCommission: null, razorpaySettlement: null, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: null },
   { date: '27.02.2026', totalSales: null, cod: null, razorpayCommission: null, razorpaySettlement: null, directCollection: null, giftCard: null, rto: null, exchange: null, excessAmtRefund: null, balance: null },
@@ -35,26 +44,26 @@ const salesData = [
 ];
 
 const dailySalesChartData = [
-  { date: '02.02', sales: 3.365756 },
-  { date: '03.02', sales: 2.506459 },
-  { date: '04.02', sales: 1.712818 },
-  { date: '05.02', sales: 2.063852 },
-  { date: '06.02', sales: 1.793636 },
-  { date: '07.02', sales: 2.321524 },
-  { date: '09.02', sales: 4.453887 },
-  { date: '10.02', sales: 1.512418 },
-  { date: '11.02', sales: 2.492546 },
-  { date: '12.02', sales: 3.930217 },
-  { date: '13.02', sales: 2.624500 },
-  { date: '14.02', sales: 3.121857 },
-  { date: '16.02', sales: 7.061620 },
-  { date: '17.02', sales: 4.287850 },
-  { date: '18.02', sales: 2.451900 },
-  { date: '19.02', sales: 2.048100 },
-  { date: '20.02', sales: 2.474980 },
-  { date: '21.02', sales: 2.777047 },
-  { date: '23.02', sales: 5.283830 },
-  { date: '24.02', sales: 2.686050 },
+  { date: '02.02', sales: 3.36576 },
+  { date: '03.02', sales: 2.50646 },
+  { date: '04.02', sales: 1.71282 },
+  { date: '05.02', sales: 2.06385 },
+  { date: '06.02', sales: 1.79364 },
+  { date: '07.02', sales: 2.32152 },
+  { date: '09.02', sales: 4.45389 },
+  { date: '10.02', sales: 1.51242 },
+  { date: '11.02', sales: 2.49255 },
+  { date: '12.02', sales: 3.93022 },
+  { date: '13.02', sales: 2.62450 },
+  { date: '14.02', sales: 3.12186 },
+  { date: '16.02', sales: 7.06162 },
+  { date: '17.02', sales: 4.28785 },
+  { date: '18.02', sales: 2.45190 },
+  { date: '19.02', sales: 2.04810 },
+  { date: '20.02', sales: 2.47498 },
+  { date: '21.02', sales: 2.77705 },
+  { date: '23.02', sales: 5.28384 },
+  { date: '24.02', sales: 2.68605 },
 ];
 
 const paymentModeData = [
@@ -70,10 +79,10 @@ const rtoExchangeTrendData = [
 ];
 
 const revenueSourceData = [
-  { name: 'COD', value: 684, color: '#10b981' },
-  { name: 'Razorpay', value: 39, color: '#3b82f6' },
-  { name: 'Direct Collection', value: 2, color: '#8b5cf6' },
-  { name: 'Gift Card', value: 6, color: '#f59e0b' },
+  { name: 'COD', value: 6.84, color: '#10b981' },
+  { name: 'Razorpay', value: 0.39, color: '#3b82f6' },
+  { name: 'Direct Collection', value: 0.02, color: '#8b5cf6' },
+  { name: 'Gift Card', value: 0.07, color: '#f59e0b' },
 ];
 
 const Dashboard = () => {
@@ -103,7 +112,7 @@ const Dashboard = () => {
 
   // Filter data based on date selection
   const getFilteredData = () => {
-    const today = new Date('2026-02-21'); // Using Feb 21 as "today" for demo
+    const today = new Date('2026-02-21');
     let filtered = [...salesData];
 
     switch(dateFilter) {
@@ -111,27 +120,22 @@ const Dashboard = () => {
         filtered = salesData.filter(d => d.date === '21.02.2026');
         break;
       case 'Last Week':
-        // Last 7 days from Feb 21
         filtered = salesData.filter(d => {
           const date = d.date.split('.')[0];
           return parseInt(date) >= 15 && parseInt(date) <= 21;
         });
         break;
       case 'Last Month':
-        // All of February
         filtered = salesData;
         break;
       case 'Last Quarter':
-        // Full February (representing quarter data)
         filtered = salesData;
         break;
       case 'Last Year':
-        // Full February (representing yearly data)
         filtered = salesData;
         break;
       case 'Custom':
         if (customStartDate && customEndDate) {
-          // Filter based on custom dates
           filtered = salesData;
         }
         break;
@@ -144,15 +148,15 @@ const Dashboard = () => {
 
   const filteredData = getFilteredData();
 
-  // Calculate KPIs from filtered data
-  const totalSales = filteredData.reduce((sum, item) => sum + (item.totalSales || 0), 0).toFixed(2);
-  const totalCOD = filteredData.reduce((sum, item) => sum + (item.cod || 0), 0).toFixed(2);
-  const totalRazorpay = filteredData.reduce((sum, item) => sum + (item.razorpaySettlement || 0), 0).toFixed(2);
-  const totalRTO = filteredData.reduce((sum, item) => sum + (item.rto || 0), 0).toFixed(2);
-  const totalExchange = filteredData.reduce((sum, item) => sum + (item.exchange || 0), 0).toFixed(2);
-  const totalBalance = filteredData.reduce((sum, item) => sum + (item.balance || 0), 0).toFixed(2);
-  const avgDailySales = (totalSales / filteredData.filter(d => d.totalSales !== null).length).toFixed(2);
-  const directCollectionTotal = filteredData.reduce((sum, item) => sum + (item.directCollection || 0), 0).toFixed(2);
+  // Calculate KPIs from filtered data (in lakhs for display)
+  const totalSales = (filteredData.reduce((sum, item) => sum + (item.totalSales || 0), 0) / 100000).toFixed(2);
+  const totalCOD = (filteredData.reduce((sum, item) => sum + (item.cod || 0), 0) / 100000).toFixed(2);
+  const totalRazorpay = (filteredData.reduce((sum, item) => sum + (item.razorpaySettlement || 0), 0) / 100000).toFixed(2);
+  const totalRTO = (filteredData.reduce((sum, item) => sum + (item.rto || 0), 0) / 100000).toFixed(2);
+  const totalExchange = (filteredData.reduce((sum, item) => sum + (item.exchange || 0), 0) / 100000).toFixed(2);
+  const totalBalance = (filteredData.reduce((sum, item) => sum + (item.balance || 0), 0) / 100000).toFixed(2);
+  const avgDailySales = (parseFloat(totalSales) / filteredData.filter(d => d.totalSales !== null).length).toFixed(2);
+  const directCollectionTotal = (filteredData.reduce((sum, item) => sum + (item.directCollection || 0), 0) / 100000).toFixed(2);
 
   // Update chart data based on filtered data
   const filteredDailySalesData = dailySalesChartData.filter(item => {
@@ -165,17 +169,17 @@ const Dashboard = () => {
   });
 
   const handleDownloadExcel = () => {
-    let csvContent = 'Invoice Created,Total Sales,COD,Razorpay Commission,Razorpay Settlement,Direct Collection,Gift Card,RTO,Exchange,Excess Amt Refund,Balance,Remarks\n';
+    let csvContent = 'Invoice Created,Total Sales,COD,Razorpay Commission,Razorpay Settlement,Direct Collection,Gift Card,RTO,Exchange,Excess Amt Refund,Balance,Remarks\\n';
     
     salesData.forEach(row => {
-      csvContent += `${row.date},${row.totalSales || ''},${row.cod || ''},${row.razorpayCommission || ''},${row.razorpaySettlement || ''},${row.directCollection || ''},${row.giftCard || ''},${row.rto || ''},${row.exchange || ''},${row.excessAmtRefund || ''},${row.balance || ''},\n`;
+      csvContent += `${row.date},${formatIndianNumber(row.totalSales)},${formatIndianNumber(row.cod)},${formatIndianNumber(row.razorpayCommission)},${formatIndianNumber(row.razorpaySettlement)},${formatIndianNumber(row.directCollection)},${formatIndianNumber(row.giftCard)},${formatIndianNumber(row.rto)},${formatIndianNumber(row.exchange)},${formatIndianNumber(row.excessAmtRefund)},${formatIndianNumber(row.balance)},\\n`;
     });
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'maybell-data-feb-2026.csv';
+    a.download = 'ecommerce-reconciliation-feb-2026.csv';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -423,25 +427,25 @@ const Dashboard = () => {
               <PieChart>
                 <Pie
                   data={revenueSourceData}
-                  cx="45%"
+                  cx="40%"
                   cy="50%"
                   innerRadius={60}
-                  outerRadius={95}
+                  outerRadius={90}
                   fill="#8884d8"
                   dataKey="value"
-                  label={({ cx, cy, midAngle, innerRadius, outerRadius, value, index }) => {
+                  label={({ cx, cy, midAngle, innerRadius, outerRadius, value }) => {
                     const RADIAN = Math.PI / 180;
-                    const radius = outerRadius + 30;
+                    const radius = outerRadius + 35;
                     const x = cx + radius * Math.cos(-midAngle * RADIAN);
                     const y = cy + radius * Math.sin(-midAngle * RADIAN);
                     return (
                       <text 
                         x={x} 
                         y={y} 
-                        fill="#374151" 
+                        fill="#1e293b" 
                         textAnchor={x > cx ? 'start' : 'end'} 
                         dominantBaseline="central"
-                        fontSize="13"
+                        fontSize="14"
                         fontWeight="600"
                       >
                         ₹{value}L
@@ -449,8 +453,8 @@ const Dashboard = () => {
                     );
                   }}
                   labelLine={{
-                    stroke: '#9ca3af',
-                    strokeWidth: 1
+                    stroke: '#64748b',
+                    strokeWidth: 1.5
                   }}
                 >
                   {revenueSourceData.map((entry, index) => (
@@ -458,7 +462,7 @@ const Dashboard = () => {
                   ))}
                 </Pie>
                 <Tooltip />
-                <Legend layout="vertical" align="right" verticalAlign="middle" wrapperStyle={{ paddingLeft: '20px' }} />
+                <Legend layout="vertical" align="right" verticalAlign="middle" wrapperStyle={{ paddingLeft: '30px' }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -627,16 +631,16 @@ const Dashboard = () => {
               {filteredData.map((row, index) => (
                 <tr key={index} className={row.totalSales === null ? 'empty-row' : ''}>
                   <td className="date-column">{row.date}</td>
-                  <td className="number-column">{row.totalSales !== null ? row.totalSales.toFixed(2) : '-'}</td>
-                  <td className="number-column">{row.cod !== null ? row.cod.toFixed(2) : '-'}</td>
-                  <td className="number-column">{row.razorpayCommission !== null ? row.razorpayCommission.toFixed(2) : '-'}</td>
-                  <td className="number-column">{row.razorpaySettlement !== null ? row.razorpaySettlement.toFixed(2) : '-'}</td>
-                  <td className="number-column">{row.directCollection !== null ? row.directCollection.toFixed(2) : '-'}</td>
-                  <td className="number-column">{row.giftCard !== null ? row.giftCard.toFixed(2) : '-'}</td>
-                  <td className="number-column">{row.rto !== null ? row.rto.toFixed(2) : '-'}</td>
-                  <td className="number-column">{row.exchange !== null ? row.exchange.toFixed(2) : '-'}</td>
-                  <td className="number-column">{row.excessAmtRefund !== null ? row.excessAmtRefund.toFixed(2) : '-'}</td>
-                  <td className="number-column">{row.balance !== null ? row.balance.toFixed(2) : '-'}</td>
+                  <td className="number-column">{formatIndianNumber(row.totalSales)}</td>
+                  <td className="number-column">{formatIndianNumber(row.cod)}</td>
+                  <td className="number-column">{formatIndianNumber(row.razorpayCommission)}</td>
+                  <td className="number-column">{formatIndianNumber(row.razorpaySettlement)}</td>
+                  <td className="number-column">{formatIndianNumber(row.directCollection)}</td>
+                  <td className="number-column">{formatIndianNumber(row.giftCard)}</td>
+                  <td className="number-column">{formatIndianNumber(row.rto)}</td>
+                  <td className="number-column">{formatIndianNumber(row.exchange)}</td>
+                  <td className="number-column">{formatIndianNumber(row.excessAmtRefund)}</td>
+                  <td className="number-column">{formatIndianNumber(row.balance)}</td>
                   <td className="text-column">-</td>
                 </tr>
               ))}
