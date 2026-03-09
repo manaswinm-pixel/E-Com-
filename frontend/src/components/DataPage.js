@@ -10,9 +10,12 @@ const DataPage = ({ addNotification }) => {
     for (let i = 6; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
       dates.push({
         date: date.toISOString().split('T')[0],
-        display: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        display: `${day}/${month}/${year}`,
       });
     }
     return dates;
