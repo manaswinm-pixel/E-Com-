@@ -64,25 +64,92 @@ const revenueSourceData = [
 ];
 
 const Dashboard = () => {
-  const [reconType, setReconType] = useState('May-bell Data Feb 2026');
+  const [reconType, setReconType] = useState('E-Commerce Reconciliation');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [dateFilter, setDateFilter] = useState('Last Month');
+  const [showDateDropdown, setShowDateDropdown] = useState(false);
+  const [showCustomCalendar, setShowCustomCalendar] = useState(false);
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
 
   const reconTypes = [
-    'May-bell Data Feb 2026',
+    'E-Commerce Reconciliation',
     'Revenue Reconciliation',
     'Ledger Reconciliation',
     'Bank Reconciliation',
   ];
 
-  // Calculate KPIs
-  const totalSales = salesData.reduce((sum, item) => sum + (item.totalSales || 0), 0).toFixed(2);
-  const totalCOD = salesData.reduce((sum, item) => sum + (item.cod || 0), 0).toFixed(2);
-  const totalRazorpay = salesData.reduce((sum, item) => sum + (item.razorpaySettlement || 0), 0).toFixed(2);
-  const totalRTO = salesData.reduce((sum, item) => sum + (item.rto || 0), 0).toFixed(2);
-  const totalExchange = salesData.reduce((sum, item) => sum + (item.exchange || 0), 0).toFixed(2);
-  const totalBalance = salesData.reduce((sum, item) => sum + (item.balance || 0), 0).toFixed(2);
-  const avgDailySales = (totalSales / salesData.filter(d => d.totalSales !== null).length).toFixed(2);
-  const directCollectionTotal = salesData.reduce((sum, item) => sum + (item.directCollection || 0), 0).toFixed(2);
+  const dateFilterOptions = [
+    'Today',
+    'Last Week',
+    'Last Month',
+    'Last Quarter',
+    'Last Year',
+    'Custom'
+  ];
+
+  // Filter data based on date selection
+  const getFilteredData = () => {
+    const today = new Date('2026-02-21'); // Using Feb 21 as "today" for demo
+    let filtered = [...salesData];
+
+    switch(dateFilter) {
+      case 'Today':
+        filtered = salesData.filter(d => d.date === '21.02.2026');
+        break;
+      case 'Last Week':
+        // Last 7 days from Feb 21
+        filtered = salesData.filter(d => {
+          const date = d.date.split('.')[0];
+          return parseInt(date) >= 15 && parseInt(date) <= 21;
+        });
+        break;
+      case 'Last Month':
+        // All of February
+        filtered = salesData;
+        break;
+      case 'Last Quarter':
+        // Full February (representing quarter data)
+        filtered = salesData;
+        break;
+      case 'Last Year':
+        // Full February (representing yearly data)
+        filtered = salesData;
+        break;
+      case 'Custom':
+        if (customStartDate && customEndDate) {
+          // Filter based on custom dates
+          filtered = salesData;
+        }
+        break;
+      default:
+        filtered = salesData;
+    }
+
+    return filtered;
+  };
+
+  const filteredData = getFilteredData();
+
+  // Calculate KPIs from filtered data
+  const totalSales = filteredData.reduce((sum, item) => sum + (item.totalSales || 0), 0).toFixed(2);
+  const totalCOD = filteredData.reduce((sum, item) => sum + (item.cod || 0), 0).toFixed(2);
+  const totalRazorpay = filteredData.reduce((sum, item) => sum + (item.razorpaySettlement || 0), 0).toFixed(2);
+  const totalRTO = filteredData.reduce((sum, item) => sum + (item.rto || 0), 0).toFixed(2);
+  const totalExchange = filteredData.reduce((sum, item) => sum + (item.exchange || 0), 0).toFixed(2);
+  const totalBalance = filteredData.reduce((sum, item) => sum + (item.balance || 0), 0).toFixed(2);
+  const avgDailySales = (totalSales / filteredData.filter(d => d.totalSales !== null).length).toFixed(2);
+  const directCollectionTotal = filteredData.reduce((sum, item) => sum + (item.directCollection || 0), 0).toFixed(2);
+
+  // Update chart data based on filtered data
+  const filteredDailySalesData = dailySalesChartData.filter(item => {
+    if (dateFilter === 'Today') return item.date === '21.02';
+    if (dateFilter === 'Last Week') {
+      const day = parseInt(item.date.split('.')[0]);
+      return day >= 15 && day <= 21;
+    }
+    return true;
+  });
 
   const handleDownloadExcel = () => {
     let csvContent = 'Invoice Created,Total Sales,COD,Razorpay Commission,Razorpay Settlement,Direct Collection,Gift Card,RTO,Exchange,Excess Amt Refund,Balance,Remarks\n';
@@ -138,6 +205,72 @@ const Dashboard = () => {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Date Filter Dropdown */}
+        <div className="date-filter-container">
+          <button
+            className="date-filter-btn"
+            onClick={() => setShowDateDropdown(!showDateDropdown)}
+          >
+            <span className="date-filter-icon">📅</span>
+            <span>{dateFilter}</span>
+            <ChevronDown size={18} className={showDateDropdown ? 'rotated' : ''} />
+          </button>
+          {showDateDropdown && (
+            <div className="date-dropdown-menu">
+              {dateFilterOptions.map((option) => (
+                <div
+                  key={option}
+                  className={`date-dropdown-item ${dateFilter === option ? 'active' : ''}`}
+                  onClick={() => {
+                    setDateFilter(option);
+                    if (option !== 'Custom') {
+                      setShowDateDropdown(false);
+                      setShowCustomCalendar(false);
+                    } else {
+                      setShowCustomCalendar(true);
+                    }
+                  }}
+                >
+                  {option}
+                </div>
+              ))}
+              {showCustomCalendar && (
+                <div className="custom-date-picker" onClick={(e) => e.stopPropagation()}>
+                  <div className="date-input-group">
+                    <label>Start Date:</label>
+                    <input
+                      type="date"
+                      value={customStartDate}
+                      onChange={(e) => setCustomStartDate(e.target.value)}
+                      className="date-input"
+                    />
+                  </div>
+                  <div className="date-input-group">
+                    <label>End Date:</label>
+                    <input
+                      type="date"
+                      value={customEndDate}
+                      onChange={(e) => setCustomEndDate(e.target.value)}
+                      className="date-input"
+                    />
+                  </div>
+                  <button
+                    className="apply-custom-date-btn"
+                    onClick={() => {
+                      if (customStartDate && customEndDate) {
+                        setShowDateDropdown(false);
+                        setShowCustomCalendar(false);
+                      }
+                    }}
+                  >
+                    Apply
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </header>
 
@@ -303,7 +436,7 @@ const Dashboard = () => {
           </div>
           <div className="chart-container" style={{ height: '320px' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={dailySalesChartData}>
+              <AreaChart data={filteredDailySalesData}>
                 <defs>
                   <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#66B3FF" stopOpacity={0.8}/>
@@ -457,7 +590,7 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {salesData.map((row, index) => (
+              {filteredData.map((row, index) => (
                 <tr key={index} className={row.totalSales === null ? 'empty-row' : ''}>
                   <td className="date-column">{row.date}</td>
                   <td className="number-column">{row.totalSales !== null ? row.totalSales.toFixed(2) : '-'}</td>
