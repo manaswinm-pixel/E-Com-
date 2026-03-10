@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "@/App.css";
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Database, MessageSquare, Shield, ChevronDown, Settings as SettingsIcon, LogOut, RefreshCw } from 'lucide-react';
+import { LayoutDashboard, Database, MessageSquare, Shield, ChevronDown, Settings as SettingsIcon, LogOut, RefreshCw, Users } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import DataPage from './components/DataPage';
 import ConversationalInsights from './components/ConversationalInsights';
@@ -9,6 +9,8 @@ import Settings from './components/Settings';
 import EcommerceReconciliation from './components/EcommerceReconciliation';
 import ReconJobDetail from './components/ReconJobDetail';
 import NotificationContainer from './components/Notifications';
+import AdminDashboard from './components/AdminDashboard';
+import UserManagement from './components/UserManagement';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -53,7 +55,7 @@ function AppContent() {
       <NotificationContainer notifications={notifications} onClose={removeNotification} />
 
       {/* Collapsible Sidebar */}
-      <aside 
+      <aside
         className={`sidebar ${sidebarExpanded ? 'expanded' : 'collapsed'}`}
         onMouseEnter={() => setSidebarExpanded(true)}
         onMouseLeave={() => setSidebarExpanded(false)}
@@ -61,44 +63,44 @@ function AppContent() {
       >
         {/* Logo - Complete OneCap logo with α symbol */}
         <Link to="/" className="logo-container-new" data-testid="logo-container">
-          <img 
-            src={LOGO_URL} 
-            alt="OneCap Logo" 
+          <img
+            src={LOGO_URL}
+            alt="OneCap Logo"
             className="logo-full-image"
           />
         </Link>
 
         {/* Navigation */}
         <nav className="nav-menu" data-testid="nav-menu">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className={`nav-item ${isActive('/') ? 'active' : ''}`}
             data-testid="nav-dashboard"
           >
             <LayoutDashboard size={20} />
             {sidebarExpanded && <span>Dashboard</span>}
           </Link>
-          
-          <Link 
-            to="/data" 
+
+          <Link
+            to="/data"
             className={`nav-item ${isActive('/data') ? 'active' : ''}`}
             data-testid="nav-data"
           >
             <Database size={20} />
             {sidebarExpanded && <span>Data</span>}
           </Link>
-          
-          <Link 
-            to="/conversational-insights" 
+
+          <Link
+            to="/conversational-insights"
             className={`nav-item ${isActive('/conversational-insights') ? 'active' : ''}`}
             data-testid="nav-conversational-insights"
           >
             <MessageSquare size={20} />
             {sidebarExpanded && <span>Conversational Insights</span>}
           </Link>
-          
-          <div 
-            className="nav-item with-dropdown" 
+
+          <div
+            className="nav-item with-dropdown"
             onClick={(e) => {
               e.stopPropagation();
               setReconciliationsOpen(!reconciliationsOpen);
@@ -110,38 +112,38 @@ function AppContent() {
               {sidebarExpanded && <span>Reconciliations</span>}
             </div>
             {sidebarExpanded && (
-              <ChevronDown 
-                size={16} 
+              <ChevronDown
+                size={16}
                 className={`dropdown-icon ${reconciliationsOpen ? 'open' : ''}`}
               />
             )}
           </div>
-          
+
           {sidebarExpanded && reconciliationsOpen && (
             <div className="dropdown-menu" data-testid="reconciliations-dropdown">
-              <Link 
-                to="/reconciliation/ecommerce" 
+              <Link
+                to="/reconciliation/ecommerce"
                 className={`dropdown-item ${isActive('/reconciliation/ecommerce') ? 'active' : ''}`}
                 onClick={() => setReconciliationsOpen(false)}
               >
                 E-Commerce Reconciliation
               </Link>
-              <Link 
-                to="/reconciliation/revenue" 
+              <Link
+                to="/reconciliation/revenue"
                 className={`dropdown-item ${isActive('/reconciliation/revenue') ? 'active' : ''}`}
                 onClick={() => setReconciliationsOpen(false)}
               >
                 Revenue Reconciliation
               </Link>
-              <Link 
-                to="/reconciliation/ledger" 
+              <Link
+                to="/reconciliation/ledger"
                 className={`dropdown-item ${isActive('/reconciliation/ledger') ? 'active' : ''}`}
                 onClick={() => setReconciliationsOpen(false)}
               >
                 Ledger Reconciliation
               </Link>
-              <Link 
-                to="/reconciliation/bank" 
+              <Link
+                to="/reconciliation/bank"
                 className={`dropdown-item ${isActive('/reconciliation/bank') ? 'active' : ''}`}
                 onClick={() => setReconciliationsOpen(false)}
               >
@@ -149,10 +151,13 @@ function AppContent() {
               </Link>
             </div>
           )}
-          
-          <div 
-            className="nav-item with-dropdown" 
-            onClick={() => setAdminPortalOpen(!adminPortalOpen)}
+
+          <div
+            className="nav-item with-dropdown"
+            onClick={(e) => {
+              e.stopPropagation();
+              setAdminPortalOpen(!adminPortalOpen);
+            }}
             data-testid="nav-admin-portal"
           >
             <div className="nav-item-content">
@@ -160,27 +165,48 @@ function AppContent() {
               {sidebarExpanded && <span>Admin Portal</span>}
             </div>
             {sidebarExpanded && (
-              <ChevronDown 
-                size={16} 
+              <ChevronDown
+                size={16}
                 className={`dropdown-icon ${adminPortalOpen ? 'open' : ''}`}
               />
             )}
           </div>
+
+          {sidebarExpanded && adminPortalOpen && (
+            <div className="dropdown-menu" data-testid="admin-portal-dropdown">
+              <Link
+                to="/admin/dashboard"
+                className={`dropdown-item ${isActive('/admin/dashboard') ? 'active' : ''}`}
+                onClick={() => setAdminPortalOpen(false)}
+              >
+                <LayoutDashboard size={18} style={{ marginRight: '10px' }} />
+                Dashboard
+              </Link>
+              <Link
+                to="/admin/users"
+                className={`dropdown-item ${isActive('/admin/users') ? 'active' : ''}`}
+                onClick={() => setAdminPortalOpen(false)}
+              >
+                <Users size={18} style={{ marginRight: '10px' }} />
+                User Management
+              </Link>
+            </div>
+          )}
         </nav>
 
         {/* Bottom Navigation - Settings & Logout */}
         <div className="nav-bottom">
-          <Link 
-            to="/settings" 
+          <Link
+            to="/settings"
             className={`nav-item ${isActive('/settings') ? 'active' : ''}`}
             data-testid="nav-settings"
           >
             <SettingsIcon size={20} />
             {sidebarExpanded && <span>Settings</span>}
           </Link>
-          
-          <div 
-            className="nav-item logout" 
+
+          <div
+            className="nav-item logout"
             onClick={handleLogout}
             data-testid="nav-logout"
           >
@@ -205,6 +231,8 @@ function AppContent() {
           <Route path="/reconciliation/ledger/:partyName" element={<EcommerceReconciliation addNotification={addNotification} reconType="Ledger" />} />
           <Route path="/reconciliation/bank" element={<EcommerceReconciliation addNotification={addNotification} reconType="Bank" />} />
           <Route path="/reconciliation/bank/:partyName" element={<EcommerceReconciliation addNotification={addNotification} reconType="Bank" />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<UserManagement />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>
