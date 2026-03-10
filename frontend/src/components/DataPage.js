@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, Play, RefreshCw } from 'lucide-react';
+import { Download, Play, RefreshCw, Check, Clock } from 'lucide-react';
 
 const DataPage = ({ addNotification }) => {
   const [syncing, setSyncing] = useState(false);
@@ -59,7 +59,7 @@ const DataPage = ({ addNotification }) => {
 
   const [syncData, setSyncData] = useState(generateStatus());
 
-  const handleStatusClick = (date, sourceKey, url) => {
+  const handleStatusClick = (date, sourceKey, sourceName, url) => {
     const clickKey = `${date}-${sourceKey}`;
     
     // If there's already a timer, it's a double click
@@ -74,12 +74,21 @@ const DataPage = ({ addNotification }) => {
       // Double click - open URL
       window.open(url, '_blank');
     } else {
-      // Single click - show notification and set timer
+      // Single click - show re-initiation notification
       addNotification({
         type: 'info',
         title: 'Agent Re-Initiated',
-        message: `Re-initiating data fetch for ${sourceKey} on ${date}`,
+        message: `Re-initiating data fetch for ${sourceName} on ${date}`,
       });
+      
+      // After 2 seconds, show completion notification
+      setTimeout(() => {
+        addNotification({
+          type: 'success',
+          title: 'Process Completed',
+          message: `Data fetch completed successfully for ${sourceName} on ${date}`,
+        });
+      }, 2000);
       
       const timer = setTimeout(() => {
         setClickTimers((prev) => {
@@ -162,8 +171,18 @@ const DataPage = ({ addNotification }) => {
 
   const getStatusDisplay = (status) => {
     const config = {
-      success: { text: 'Fetched', color: '#d1fae5', textColor: '#065f46' },
-      queued: { text: 'Pending', color: '#fef3c7', textColor: '#92400e' },
+      success: { 
+        icon: <Check size={18} strokeWidth={2.5} />, 
+        color: '#f9fafb', 
+        iconColor: '#374151',
+        borderColor: '#e5e7eb'
+      },
+      queued: { 
+        icon: <Clock size={18} strokeWidth={2} />, 
+        color: '#f9fafb', 
+        iconColor: '#6b7280',
+        borderColor: '#e5e7eb'
+      },
     };
     return config[status];
   };
@@ -207,15 +226,16 @@ const DataPage = ({ addNotification }) => {
                     return (
                       <td key={source.key} className="status-cell">
                         <button
-                          className="status-indicator clickable"
+                          className="status-indicator-icon clickable"
                           style={{
                             backgroundColor: statusConfig.color,
-                            color: statusConfig.textColor,
+                            color: statusConfig.iconColor,
+                            border: `1px solid ${statusConfig.borderColor}`,
                           }}
-                          onClick={() => handleStatusClick(dateObj.date, source.key, source.url)}
+                          onClick={() => handleStatusClick(dateObj.date, source.key, source.name, source.url)}
                           title="Single click: Re-initiate | Double click: Open website"
                         >
-                          {statusConfig.text}
+                          {statusConfig.icon}
                         </button>
                       </td>
                     );

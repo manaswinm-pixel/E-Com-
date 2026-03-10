@@ -566,6 +566,31 @@
   text-transform: capitalize;
 }
 
+.status-indicator-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.status-indicator-icon:hover {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.status-indicator-icon:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
 .action-row {
   background-color: #f9fafb;
   font-weight: 600;
