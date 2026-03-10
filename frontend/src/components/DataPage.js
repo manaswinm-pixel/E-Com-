@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, Play, RefreshCw, Check, Clock } from 'lucide-react';
+import { Download, Play, RefreshCw, Check, Hourglass } from 'lucide-react';
 
 const DataPage = ({ addNotification }) => {
   const [syncing, setSyncing] = useState(false);
@@ -41,11 +41,11 @@ const DataPage = ({ addNotification }) => {
     const totalItems = dates.length * dataSourcesConfig.length;
     const queuedCount = 3 + Math.floor(Math.random() * 2); // 3 or 4 items queued
     const queuedIndices = new Set();
-    
+
     while (queuedIndices.size < queuedCount) {
       queuedIndices.add(Math.floor(Math.random() * totalItems));
     }
-    
+
     const data = {};
     dates.forEach((date, dateIdx) => {
       data[date.date] = {};
@@ -61,7 +61,7 @@ const DataPage = ({ addNotification }) => {
 
   const handleStatusClick = (date, sourceKey, sourceName, url) => {
     const clickKey = `${date}-${sourceKey}`;
-    
+
     // If there's already a timer, it's a double click
     if (clickTimers[clickKey]) {
       clearTimeout(clickTimers[clickKey]);
@@ -70,7 +70,7 @@ const DataPage = ({ addNotification }) => {
         delete newTimers[clickKey];
         return newTimers;
       });
-      
+
       // Double click - open URL
       window.open(url, '_blank');
     } else {
@@ -80,7 +80,7 @@ const DataPage = ({ addNotification }) => {
         title: 'Agent Re-Initiated',
         message: `Re-initiating data fetch for ${sourceName} on ${date}`,
       });
-      
+
       // After 2 seconds, show completion notification
       setTimeout(() => {
         addNotification({
@@ -89,7 +89,7 @@ const DataPage = ({ addNotification }) => {
           message: `Data fetch completed successfully for ${sourceName} on ${date}`,
         });
       }, 2000);
-      
+
       const timer = setTimeout(() => {
         setClickTimers((prev) => {
           const newTimers = { ...prev };
@@ -97,7 +97,7 @@ const DataPage = ({ addNotification }) => {
           return newTimers;
         });
       }, 300); // 300ms window for double click
-      
+
       setClickTimers((prev) => ({ ...prev, [clickKey]: timer }));
     }
   };
@@ -109,7 +109,7 @@ const DataPage = ({ addNotification }) => {
       title: 'Sync Started',
       message: 'Daily data sync is in progress...',
     });
-    
+
     setTimeout(() => {
       setSyncData(generateStatus());
       setSyncing(false);
@@ -171,17 +171,18 @@ const DataPage = ({ addNotification }) => {
 
   const getStatusDisplay = (status) => {
     const config = {
-      success: { 
-        icon: <Check size={18} strokeWidth={2.5} />, 
-        color: '#f9fafb', 
+      success: {
+        icon: <Check size={18} strokeWidth={2.5} />,
+        color: '#f9fafb',
         iconColor: '#374151',
         borderColor: '#e5e7eb'
       },
-      queued: { 
-        icon: <Clock size={18} strokeWidth={2} />, 
-        color: '#f9fafb', 
+      queued: {
+        icon: <Hourglass size={18} strokeWidth={2} />,
+        color: '#f9fafb',
         iconColor: '#6b7280',
-        borderColor: '#e5e7eb'
+        borderColor: '#e5e7eb',
+        isQueued: true
       },
     };
     return config[status];
@@ -231,6 +232,7 @@ const DataPage = ({ addNotification }) => {
                             backgroundColor: statusConfig.color,
                             color: statusConfig.iconColor,
                             border: `1px solid ${statusConfig.borderColor}`,
+                            borderRadius: statusConfig.isQueued ? '50%' : '8px'
                           }}
                           onClick={() => handleStatusClick(dateObj.date, source.key, source.name, source.url)}
                           title="Single click: Re-initiate | Double click: Open website"

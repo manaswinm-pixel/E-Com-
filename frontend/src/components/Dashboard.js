@@ -85,6 +85,31 @@ const revenueSourceData = [
   { name: 'Gift Card', value: 0.07, color: '#f59e0b' },
 ];
 
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+  const RADIAN = Math.PI / 180;
+  // Push the labels further out
+  const radius = innerRadius + (outerRadius - innerRadius) * 1.5;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  // Don't show labels for 0%
+  if (percent === 0) return null;
+
+  return (
+    <text
+      x={x}
+      y={y}
+      fill={revenueSourceData[index].color}
+      textAnchor={x > cx ? 'start' : 'end'}
+      dominantBaseline="central"
+      fontSize="12px"
+      fontWeight="600"
+    >
+      {`${(percent * 100).toFixed(1)}%`}
+    </text>
+  );
+};
+
 const Dashboard = () => {
   const [reconType, setReconType] = useState('E-Commerce Reconciliation');
   const [showDropdown, setShowDropdown] = useState(false);
@@ -115,7 +140,7 @@ const Dashboard = () => {
     const today = new Date('2026-02-21');
     let filtered = [...salesData];
 
-    switch(dateFilter) {
+    switch (dateFilter) {
       case 'Today':
         filtered = salesData.filter(d => d.date === '21.02.2026');
         break;
@@ -170,7 +195,7 @@ const Dashboard = () => {
 
   const handleDownloadExcel = () => {
     let csvContent = 'Invoice Created,Total Sales,COD,Razorpay Commission,Razorpay Settlement,Direct Collection,Gift Card,RTO,Exchange,Excess Amt Refund,Balance,Remarks\\n';
-    
+
     salesData.forEach(row => {
       csvContent += `${row.date},${formatIndianNumber(row.totalSales)},${formatIndianNumber(row.cod)},${formatIndianNumber(row.razorpayCommission)},${formatIndianNumber(row.razorpaySettlement)},${formatIndianNumber(row.directCollection)},${formatIndianNumber(row.giftCard)},${formatIndianNumber(row.rto)},${formatIndianNumber(row.exchange)},${formatIndianNumber(row.excessAmtRefund)},${formatIndianNumber(row.balance)},\\n`;
     });
@@ -191,9 +216,9 @@ const Dashboard = () => {
       {/* Header with Dropdown and Logo */}
       <header className="dashboard-header-with-dropdown">
         <div className="header-logo-and-title">
-          <img 
-            src="https://customer-assets.emergentagent.com/job_data-convo-poc/artifacts/rmuu7ljf_OneCap%20logo%20Blue.svg" 
-            alt="OneCap Logo" 
+          <img
+            src="https://customer-assets.emergentagent.com/job_data-convo-poc/artifacts/rmuu7ljf_OneCap%20logo%20Blue.svg"
+            alt="OneCap Logo"
             className="dashboard-header-logo"
           />
           <div className="recon-type-dropdown">
@@ -433,17 +458,17 @@ const Dashboard = () => {
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
-                  label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
-                  labelLine={false}
+                  label={renderCustomizedLabel}
+                  labelLine={{ stroke: '#94a3b8', strokeWidth: 1 }}
                 >
                   {revenueSourceData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip 
+                <Tooltip
                   formatter={(value) => `₹${value}L`}
-                  contentStyle={{ 
-                    backgroundColor: '#fff', 
+                  contentStyle={{
+                    backgroundColor: '#fff',
                     border: '1px solid #e2e8f0',
                     borderRadius: '8px',
                     padding: '10px 14px',
@@ -452,8 +477,8 @@ const Dashboard = () => {
                 />
               </PieChart>
             </ResponsiveContainer>
-            <div style={{ 
-              width: '45%', 
+            <div style={{
+              width: '45%',
               paddingLeft: '20px',
               display: 'flex',
               flexDirection: 'column',
@@ -476,16 +501,16 @@ const Dashboard = () => {
                       backgroundColor: entry.color,
                       borderRadius: '4px'
                     }} />
-                    <span style={{ 
-                      fontSize: '14px', 
+                    <span style={{
+                      fontSize: '14px',
                       fontWeight: '600',
                       color: '#1e293b'
                     }}>
                       {entry.name}
                     </span>
                   </div>
-                  <span style={{ 
-                    fontSize: '15px', 
+                  <span style={{
+                    fontSize: '15px',
                     fontWeight: '700',
                     color: '#0f172a'
                   }}>
@@ -506,20 +531,20 @@ const Dashboard = () => {
               <AreaChart data={filteredDailySalesData}>
                 <defs>
                   <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#66B3FF" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#66B3FF" stopOpacity={0.1}/>
+                    <stop offset="5%" stopColor="#66B3FF" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#66B3FF" stopOpacity={0.1} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                 <XAxis dataKey="date" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip />
-                <Area 
-                  type="monotone" 
-                  dataKey="sales" 
-                  stroke="#66B3FF" 
-                  fillOpacity={1} 
-                  fill="url(#colorSales)" 
+                <Area
+                  type="monotone"
+                  dataKey="sales"
+                  stroke="#66B3FF"
+                  fillOpacity={1}
+                  fill="url(#colorSales)"
                   strokeWidth={2}
                 />
               </AreaChart>
