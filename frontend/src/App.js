@@ -195,10 +195,14 @@ function AppContent() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/data" element={<DataPage addNotification={addNotification} />} />
           <Route path="/conversational-insights" element={<ConversationalInsights />} />
-          <Route path="/reconciliation/ecommerce" element={<EcommerceReconciliation addNotification={addNotification} />} />
+          <Route path="/reconciliation/ecommerce" element={<EcommerceReconciliation addNotification={addNotification} reconType="E-Commerce" />} />
+          <Route path="/reconciliation/ecommerce/:partyName" element={<EcommerceReconciliation addNotification={addNotification} reconType="E-Commerce" />} />
           <Route path="/reconciliation/revenue" element={<EcommerceReconciliation addNotification={addNotification} reconType="Revenue" />} />
+          <Route path="/reconciliation/revenue/:partyName" element={<EcommerceReconciliation addNotification={addNotification} reconType="Revenue" />} />
           <Route path="/reconciliation/ledger" element={<EcommerceReconciliation addNotification={addNotification} reconType="Ledger" />} />
+          <Route path="/reconciliation/ledger/:partyName" element={<EcommerceReconciliation addNotification={addNotification} reconType="Ledger" />} />
           <Route path="/reconciliation/bank" element={<EcommerceReconciliation addNotification={addNotification} reconType="Bank" />} />
+          <Route path="/reconciliation/bank/:partyName" element={<EcommerceReconciliation addNotification={addNotification} reconType="Bank" />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>
