@@ -542,8 +542,8 @@ const Dashboard = () => {
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="rto" fill="#ef4444" name="RTO Amount" />
-                <Bar dataKey="exchange" fill="#f59e0b" name="Exchange Amount" />
+                <Bar dataKey="rto" fill="#7cb5ec" name="RTO Amount" barSize={20} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="exchange" fill="#434348" name="Exchange Amount" barSize={20} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -561,8 +561,8 @@ const Dashboard = () => {
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="cod" stackId="a" fill="#10b981" name="COD" />
-                <Bar dataKey="razorpay" stackId="a" fill="#3b82f6" name="Razorpay" />
+                <Bar dataKey="cod" stackId="a" fill="#7cb5ec" name="COD" barSize={30} />
+                <Bar dataKey="razorpay" stackId="a" fill="#434348" name="Razorpay" barSize={30} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

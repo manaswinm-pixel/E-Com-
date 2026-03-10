@@ -413,14 +413,14 @@ const ConversationalInsights = () => {
 
   const handleQuestionClick = (question) => {
     const cleanQuestion = question.replace('★ ', '');
-    
+
     const userMessage = {
       type: 'user',
       content: question
     };
 
     const response = mockResponses[question] || mockResponses['Top 10 due invoices that can be collected?'];
-    
+
     const botMessage = {
       type: 'bot',
       ...response,
@@ -433,7 +433,7 @@ const ConversationalInsights = () => {
 
   const handleSend = () => {
     if (!inputValue.trim()) return;
-    
+
     // Check if the question exists in mockResponses, otherwise provide a default response
     let response;
     if (mockResponses[inputValue]) {
@@ -476,7 +476,7 @@ const ConversationalInsights = () => {
         ]
       };
     }
-    
+
     const userMessage = {
       type: 'user',
       content: inputValue
@@ -509,11 +509,11 @@ const ConversationalInsights = () => {
       {messages.length === 0 ? (
         <div className="conversational-insights-redesign-v2">
           <div className="curved-background"></div>
-          
+
           <div className="insights-content-v2">
             <div className="alpha-symbol-v2">α</div>
             <h1 className="insights-title-v2">Business Intelligence, Instant Insights.</h1>
-            
+
             <div className="insights-search-bar-v2">
               <div className="search-icon-circle">
                 <Star size={16} />
@@ -531,13 +531,13 @@ const ConversationalInsights = () => {
               <button className="send-button-v2" onClick={handleSend}>
                 <Send size={18} />
               </button>
-              
+
               {showFAQ && (
                 <div className="faq-popup">
                   {faqSuggestions.map((q, i) => (
-                    <div 
-                      key={i} 
-                      className="faq-item" 
+                    <div
+                      key={i}
+                      className="faq-item"
                       onMouseDown={(e) => {
                         e.preventDefault();
                         setInputValue(q);
@@ -550,7 +550,7 @@ const ConversationalInsights = () => {
                 </div>
               )}
             </div>
-            
+
             <div className="questions-carousel">
               <button className="carousel-arrow left"><ChevronLeft size={20} /></button>
               <div className="questions-scroll">
@@ -562,7 +562,7 @@ const ConversationalInsights = () => {
               </div>
               <button className="carousel-arrow right"><ChevronRight size={20} /></button>
             </div>
-            
+
             <p className="disclaimer-text">OneCap AI Analyst can make mistakes. Check important information</p>
           </div>
         </div>
@@ -576,24 +576,24 @@ const ConversationalInsights = () => {
                     {message.content}
                   </div>
                 )}
-                
+
                 {message.type === 'bot' && (
                   <div className="bot-response-card-new">
                     <div className="response-title-bar">
                       {message.title}
                     </div>
-                    
+
                     <div className="response-content-area">
                       <p className="response-desc-text">{message.description}</p>
-                      
+
                       <div className="controls-row">
-                        <button 
+                        <button
                           className={`view-toggle-btn ${viewMode[message.id] === 'table' ? 'active' : ''}`}
                           onClick={() => toggleViewMode(message.id, 'table')}
                         >
                           <span className="btn-icon-text">≡ Table</span>
                         </button>
-                        <button 
+                        <button
                           className={`view-toggle-btn ${viewMode[message.id] === 'chart' ? 'active' : ''}`}
                           onClick={() => toggleViewMode(message.id, 'chart')}
                         >
@@ -619,7 +619,7 @@ const ConversationalInsights = () => {
                           <table className="invoice-data-table">
                             <thead>
                               <tr>
-                                {message.tableData && message.tableData.length > 0 && 
+                                {message.tableData && message.tableData.length > 0 &&
                                   Object.keys(message.tableData[0]).map((key, i) => (
                                     <th key={i}>{key.charAt(0).toUpperCase() + key.slice(1)}</th>
                                   ))
@@ -642,22 +642,24 @@ const ConversationalInsights = () => {
                           <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={message.chartData}>
                               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                              <XAxis 
-                                dataKey={message.chartData && message.chartData[0] ? Object.keys(message.chartData[0])[0] : 'date'} 
+                              <XAxis
+                                dataKey={message.chartData && message.chartData[0] ? Object.keys(message.chartData[0])[0] : 'date'}
                                 tick={{ fontSize: 12 }}
                               />
                               <YAxis />
                               <Tooltip />
                               <Legend />
-                              {message.chartData && message.chartData.length > 0 && 
+                              {message.chartData && message.chartData.length > 0 &&
                                 Object.keys(message.chartData[0])
                                   .filter(key => key !== 'date' && key !== 'name')
                                   .map((key, i) => (
-                                    <Bar 
-                                      key={i} 
-                                      dataKey={key} 
-                                      fill={i === 0 ? '#0066CC' : i === 1 ? '#10b981' : '#f59e0b'} 
-                                      name={key.charAt(0).toUpperCase() + key.slice(1)} 
+                                    <Bar
+                                      key={i}
+                                      dataKey={key}
+                                      fill={i === 0 ? '#7cb5ec' : i === 1 ? '#434348' : '#90ed7d'}
+                                      name={key.charAt(0).toUpperCase() + key.slice(1)}
+                                      barSize={20}
+                                      radius={[4, 4, 0, 0]}
                                     />
                                   ))
                               }
