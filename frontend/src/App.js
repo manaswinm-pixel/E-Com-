@@ -98,7 +98,10 @@ function AppContent() {
           
           <div 
             className="nav-item with-dropdown" 
-            onClick={() => setReconciliationsOpen(!reconciliationsOpen)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setReconciliationsOpen(!reconciliationsOpen);
+            }}
             data-testid="nav-reconciliations"
           >
             <div className="nav-item-content">
@@ -118,24 +121,28 @@ function AppContent() {
               <Link 
                 to="/reconciliation/ecommerce" 
                 className={`dropdown-item ${isActive('/reconciliation/ecommerce') ? 'active' : ''}`}
+                onClick={() => setReconciliationsOpen(false)}
               >
                 E-Commerce Reconciliation
               </Link>
               <Link 
                 to="/reconciliation/revenue" 
                 className={`dropdown-item ${isActive('/reconciliation/revenue') ? 'active' : ''}`}
+                onClick={() => setReconciliationsOpen(false)}
               >
                 Revenue Reconciliation
               </Link>
               <Link 
                 to="/reconciliation/ledger" 
                 className={`dropdown-item ${isActive('/reconciliation/ledger') ? 'active' : ''}`}
+                onClick={() => setReconciliationsOpen(false)}
               >
                 Ledger Reconciliation
               </Link>
               <Link 
                 to="/reconciliation/bank" 
                 className={`dropdown-item ${isActive('/reconciliation/bank') ? 'active' : ''}`}
+                onClick={() => setReconciliationsOpen(false)}
               >
                 Bank Reconciliation
               </Link>
