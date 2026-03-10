@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Edit3, Plus, X, Edit2 } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 
 const EcommerceReconciliation = ({ addNotification, reconType = 'E-Commerce' }) => {
   const [activeView, setActiveView] = useState('parties'); // 'parties' or 'recons'
@@ -47,6 +47,13 @@ const EcommerceReconciliation = ({ addNotification, reconType = 'E-Commerce' }) 
   
   const navigate = useNavigate();
   const { partyName: selectedParty } = useParams();
+  
+  // Reset to showing recons when party is selected
+  useEffect(() => {
+    if (selectedParty) {
+      setActiveView('recons');
+    }
+  }, [selectedParty]);
 
   // Mock data
   const partiesData = [
@@ -78,7 +85,7 @@ const EcommerceReconciliation = ({ addNotification, reconType = 'E-Commerce' }) 
   const getPartyRecons = (party) => allReconsData.filter(recon => recon.party === party);
 
   const handlePartyClick = (partyName) => {
-    const reconTypeSlug = reconType.toLowerCase().replace(' ', '-');
+    const reconTypeSlug = reconType.toLowerCase().replace(/\s+/g, ''); // Remove all spaces
     navigate(`/reconciliation/${reconTypeSlug}/${encodeURIComponent(partyName)}`);
   };
 
@@ -125,7 +132,8 @@ const EcommerceReconciliation = ({ addNotification, reconType = 'E-Commerce' }) 
 
   // Determine which data to show
   const isPartyDetailView = !!selectedParty;
-  const currentReconsData = isPartyDetailView ? getPartyRecons(selectedParty) : allReconsData;
+  const decodedPartyName = selectedParty ? decodeURIComponent(selectedParty) : null;
+  const currentReconsData = isPartyDetailView ? getPartyRecons(decodedPartyName) : allReconsData;
   
   // Filter and paginate
   const filteredParties = partiesData.filter(p => 
@@ -137,7 +145,7 @@ const EcommerceReconciliation = ({ addNotification, reconType = 'E-Commerce' }) 
   );
 
   const currentData = activeView === 'parties' && !isPartyDetailView ? filteredParties : filteredRecons;
-  const totalPages = Math.ceil(currentData.length / rowsPerPage);
+  const totalPages = Math.ceil((currentData.length || 1) / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
   const paginatedData = currentData.slice(startIndex, startIndex + rowsPerPage);
 
@@ -222,34 +230,55 @@ const EcommerceReconciliation = ({ addNotification, reconType = 'E-Commerce' }) 
                 </tr>
               </thead>
               <tbody>
-                {paginatedData.map((party, index) => (
-                  <tr key={index} onClick={() => handlePartyClick(party.name)} className="clickable-row">
-                    <td className="party-name">{party.name}</td>
-                    <td className="recon-run">{party.latestRun}</td>
-                    <td className="recon-period">{party.period}</td>
-                    <td>
-                      <span className={`status-number ${party.completed > 0 ? 'completed' : ''}`}>
-                        {party.completed}
-                      </span>
-                    </td>
-                    <td>
-                      <span className={`status-number ${party.processing > 0 ? 'processing' : ''}`}>
-                        {party.processing}
-                      </span>
-                    </td>
-                    <td>
-                      <button 
-                        className="instruction-icon-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addNotification({ type: 'info', title: 'Instructions', message: `Viewing instructions for ${party.name}` });
-                        }}
-                      >
-                        →
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {paginatedData.map((party, index) => {
+                  const reconTypeSlug = reconType.toLowerCase().replace(/\s+/g, '');
+                  const partyLink = `/reconciliation/${reconTypeSlug}/${encodeURIComponent(party.name)}`;
+                  
+                  return (
+                    <tr key={index} className="clickable-row">
+                      <td className="party-name">
+                        <Link to={partyLink} style={{color: 'inherit', textDecoration: 'none', display: 'block', width: '100%'}}>
+                          {party.name}
+                        </Link>
+                      </td>
+                      <td className="recon-run">
+                        <Link to={partyLink} style={{color: 'inherit', textDecoration: 'none', display: 'block', width: '100%'}}>
+                          {party.latestRun}
+                        </Link>
+                      </td>
+                      <td className="recon-period">
+                        <Link to={partyLink} style={{color: 'inherit', textDecoration: 'none', display: 'block', width: '100%'}}>
+                          {party.period}
+                        </Link>
+                      </td>
+                      <td>
+                        <Link to={partyLink} style={{color: 'inherit', textDecoration: 'none', display: 'block', width: '100%'}}>
+                          <span className={`status-number ${party.completed > 0 ? 'completed' : ''}`}>
+                            {party.completed}
+                          </span>
+                        </Link>
+                      </td>
+                      <td>
+                        <Link to={partyLink} style={{color: 'inherit', textDecoration: 'none', display: 'block', width: '100%'}}>
+                          <span className={`status-number ${party.processing > 0 ? 'processing' : ''}`}>
+                            {party.processing}
+                          </span>
+                        </Link>
+                      </td>
+                      <td>
+                        <button 
+                          className="instruction-icon-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addNotification({ type: 'info', title: 'Instructions', message: `Viewing instructions for ${party.name}` });
+                          }}
+                        >
+                          →
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           ) : (
