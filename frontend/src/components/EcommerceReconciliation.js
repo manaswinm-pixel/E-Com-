@@ -85,7 +85,7 @@ const EcommerceReconciliation = ({ addNotification, reconType = 'E-Commerce' }) 
   const getPartyRecons = (party) => allReconsData.filter(recon => recon.party === party);
 
   const handlePartyClick = (partyName) => {
-    const reconTypeSlug = reconType.toLowerCase().replace(/\s+/g, ''); // Remove all spaces
+    const reconTypeSlug = reconType.toLowerCase().replace(/[^a-z0-9]/g, ''); // Remove ALL non-alphanumeric
     navigate(`/reconciliation/${reconTypeSlug}/${encodeURIComponent(partyName)}`);
   };
 
@@ -231,7 +231,7 @@ const EcommerceReconciliation = ({ addNotification, reconType = 'E-Commerce' }) 
               </thead>
               <tbody>
                 {paginatedData.map((party, index) => {
-                  const reconTypeSlug = reconType.toLowerCase().replace(/\s+/g, '');
+                  const reconTypeSlug = reconType.toLowerCase().replace(/[^a-z0-9]/g, ''); // Remove ALL non-alphanumeric
                   const partyLink = `/reconciliation/${reconTypeSlug}/${encodeURIComponent(party.name)}`;
                   
                   return (
