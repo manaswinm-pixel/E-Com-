@@ -94,6 +94,11 @@ const EcommerceReconciliation = ({ addNotification, reconType = 'E-Commerce' }) 
     setModalStep(1);
   };
 
+  const handleRetry = () => {
+    setShowNewReconModal(true);
+    setModalStep(1);
+  };
+
   const handleEditInstructions = () => {
     setShowEditInstructionsModal(true);
   };
@@ -296,24 +301,29 @@ const EcommerceReconciliation = ({ addNotification, reconType = 'E-Commerce' }) 
                 </tr>
               </thead>
               <tbody>
-                {paginatedData.map((recon, index) => (
-                  <tr key={index}>
-                    <td className="recon-id">{recon.id}</td>
-                    {!isPartyDetailView && <td className="party-name">{recon.party}</td>}
-                    <td className="recon-type">{recon.type}</td>
-                    <td className="recon-datetime">{recon.dateTime}</td>
-                    {!isPartyDetailView && <td className="recon-period">{recon.period}</td>}
-                    <td className="created-by">{recon.createdBy}</td>
-                    <td>
-                      <span className="status-badge completed">
-                        ● {recon.status}
-                      </span>
-                      {index === 0 && isPartyDetailView && (
-                        <button className="retry-btn">Retry</button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                {paginatedData.map((recon, index) => {
+                  const reconTypeSlug = reconType.toLowerCase().replace(/[^a-z0-9]/g, '');
+                  const jobDetailLink = `/reconciliation/${reconTypeSlug}/${encodeURIComponent(recon.party)}/${recon.id}`;
+                  
+                  return (
+                    <tr key={index} className="clickable-row" onClick={() => navigate(jobDetailLink)}>
+                      <td className="recon-id">{recon.id}</td>
+                      {!isPartyDetailView && <td className="party-name">{recon.party}</td>}
+                      <td className="recon-type">{recon.type}</td>
+                      <td className="recon-datetime">{recon.dateTime}</td>
+                      {!isPartyDetailView && <td className="recon-period">{recon.period}</td>}
+                      <td className="created-by">{recon.createdBy}</td>
+                      <td>
+                        <span className="status-badge completed">
+                          ● {recon.status}
+                        </span>
+                        {index === 0 && isPartyDetailView && (
+                          <button className="retry-btn" onClick={(e) => { e.stopPropagation(); handleRetry(); }}>Retry</button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           )}

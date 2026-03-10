@@ -7,6 +7,7 @@ import DataPage from './components/DataPage';
 import ConversationalInsights from './components/ConversationalInsights';
 import Settings from './components/Settings';
 import EcommerceReconciliation from './components/EcommerceReconciliation';
+import ReconJobDetail from './components/ReconJobDetail';
 import NotificationContainer from './components/Notifications';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -197,6 +198,7 @@ function AppContent() {
           <Route path="/conversational-insights" element={<ConversationalInsights />} />
           <Route path="/reconciliation/ecommerce" element={<EcommerceReconciliation addNotification={addNotification} reconType="E-Commerce" />} />
           <Route path="/reconciliation/ecommerce/:partyName" element={<EcommerceReconciliation addNotification={addNotification} reconType="E-Commerce" />} />
+          <Route path="/reconciliation/ecommerce/:partyName/:jobId" element={<ReconJobDetail addNotification={addNotification} />} />
           <Route path="/reconciliation/revenue" element={<EcommerceReconciliation addNotification={addNotification} reconType="Revenue" />} />
           <Route path="/reconciliation/revenue/:partyName" element={<EcommerceReconciliation addNotification={addNotification} reconType="Revenue" />} />
           <Route path="/reconciliation/ledger" element={<EcommerceReconciliation addNotification={addNotification} reconType="Ledger" />} />
