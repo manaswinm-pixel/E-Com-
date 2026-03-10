@@ -79,35 +79,51 @@ const rtoExchangeTrendData = [
 ];
 
 const revenueSourceData = [
-  { name: 'COD', value: 6.84, color: '#10b981' },
-  { name: 'Razorpay', value: 0.39, color: '#3b82f6' },
-  { name: 'Direct Collection', value: 0.02, color: '#8b5cf6' },
-  { name: 'Gift Card', value: 0.07, color: '#f59e0b' },
+  { name: 'COD', value: 6.84, color: '#001768' },
+  { name: 'Razorpay', value: 0.39, color: '#4d3ec1' },
+  { name: 'Direct Collection', value: 0.02, color: '#3ab7e9' },
+  { name: 'Gift Card', value: 0.07, color: '#8b008b' },
 ];
 
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
-  const RADIAN = Math.PI / 180;
-  // Push the labels further out
-  const radius = innerRadius + (outerRadius - innerRadius) * 1.5;
-  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-  const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-  // Don't show labels for 0%
-  if (percent === 0) return null;
-
-  return (
-    <text
-      x={x}
-      y={y}
-      fill={revenueSourceData[index].color}
-      textAnchor={x > cx ? 'start' : 'end'}
-      dominantBaseline="central"
-      fontSize="12px"
-      fontWeight="600"
-    >
-      {`${(percent * 100).toFixed(1)}%`}
-    </text>
-  );
+const CustomPieTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const { name, value, percent, fill } = payload[0];
+    return (
+      <div className="custom-pie-tooltip" style={{
+        backgroundColor: '#fff',
+        padding: '12px 16px',
+        border: 'none',
+        borderRadius: '12px',
+        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+        position: 'relative'
+      }}>
+        <div style={{
+          fontSize: '13px',
+          fontWeight: '700',
+          color: fill,
+          marginBottom: '4px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px'
+        }}>
+          {name}
+        </div>
+        <div style={{ fontSize: '12px', color: '#475569', fontWeight: '500' }}>
+          {name}: ₹{value}L ({(percent * 100).toFixed(0)}%)
+        </div>
+        <div style={{
+          position: 'absolute',
+          bottom: '-6px',
+          left: '50%',
+          transform: 'translateX(-50%) rotate(45deg)',
+          width: '12px',
+          height: '12px',
+          backgroundColor: '#fff',
+        }} />
+      </div>
+    );
+  }
+  return null;
 };
 
 const Dashboard = () => {
@@ -448,73 +464,60 @@ const Dashboard = () => {
             <h3 className="chart-title">Revenue Source Distribution</h3>
           </div>
           <div className="chart-container" style={{ height: '320px', display: 'flex', alignItems: 'center' }}>
-            <ResponsiveContainer width="55%" height="100%">
+            <ResponsiveContainer width="50%" height="100%">
               <PieChart>
                 <Pie
                   data={revenueSourceData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={70}
-                  outerRadius={100}
-                  fill="#8884d8"
+                  innerRadius={75}
+                  outerRadius={115}
+                  paddingAngle={2}
                   dataKey="value"
-                  label={renderCustomizedLabel}
-                  labelLine={{ stroke: '#94a3b8', strokeWidth: 1 }}
+                  stroke="none"
                 >
                   {revenueSourceData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip
-                  formatter={(value) => `₹${value}L`}
-                  contentStyle={{
-                    backgroundColor: '#fff',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '8px',
-                    padding: '10px 14px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                  }}
-                />
+                <Tooltip content={<CustomPieTooltip />} />
               </PieChart>
             </ResponsiveContainer>
             <div style={{
-              width: '45%',
-              paddingLeft: '20px',
+              width: '50%',
+              paddingLeft: '30px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '16px'
+              gap: '12px'
             }}>
               {revenueSourceData.map((entry, index) => (
                 <div key={index} style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '10px 12px',
-                  backgroundColor: '#f8fafc',
-                  borderRadius: '8px',
-                  border: '1px solid #e2e8f0'
+                  padding: '4px 0',
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{
-                      width: '16px',
-                      height: '16px',
+                      width: '14px',
+                      height: '14px',
                       backgroundColor: entry.color,
-                      borderRadius: '4px'
+                      borderRadius: '3px'
                     }} />
                     <span style={{
                       fontSize: '14px',
-                      fontWeight: '600',
-                      color: '#1e293b'
+                      fontWeight: '500',
+                      color: '#475569'
                     }}>
                       {entry.name}
                     </span>
                   </div>
                   <span style={{
-                    fontSize: '15px',
-                    fontWeight: '700',
-                    color: '#0f172a'
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: '#475569'
                   }}>
-                    ₹{entry.value}L
+                    {entry.value}L
                   </span>
                 </div>
               ))}
