@@ -1,11 +1,12 @@
 import { useState } from "react";
 import "@/App.css";
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Database, MessageSquare, Shield, ChevronDown, Settings as SettingsIcon, LogOut } from 'lucide-react';
+import { LayoutDashboard, Database, MessageSquare, Shield, ChevronDown, Settings as SettingsIcon, LogOut, RefreshCw } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import DataPage from './components/DataPage';
 import ConversationalInsights from './components/ConversationalInsights';
 import Settings from './components/Settings';
+import EcommerceReconciliation from './components/EcommerceReconciliation';
 import NotificationContainer from './components/Notifications';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -17,6 +18,7 @@ const LOGO_URL = "https://customer-assets.emergentagent.com/job_data-convo-poc/a
 function AppContent() {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [adminPortalOpen, setAdminPortalOpen] = useState(false);
+  const [reconciliationsOpen, setReconciliationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
@@ -96,6 +98,52 @@ function AppContent() {
           
           <div 
             className="nav-item with-dropdown" 
+            onClick={() => setReconciliationsOpen(!reconciliationsOpen)}
+            data-testid="nav-reconciliations"
+          >
+            <div className="nav-item-content">
+              <RefreshCw size={20} />
+              {sidebarExpanded && <span>Reconciliations</span>}
+            </div>
+            {sidebarExpanded && (
+              <ChevronDown 
+                size={16} 
+                className={`dropdown-icon ${reconciliationsOpen ? 'open' : ''}`}
+              />
+            )}
+          </div>
+          
+          {sidebarExpanded && reconciliationsOpen && (
+            <div className="dropdown-menu" data-testid="reconciliations-dropdown">
+              <Link 
+                to="/reconciliation/ecommerce" 
+                className={`dropdown-item ${isActive('/reconciliation/ecommerce') ? 'active' : ''}`}
+              >
+                E-Commerce Reconciliation
+              </Link>
+              <Link 
+                to="/reconciliation/revenue" 
+                className={`dropdown-item ${isActive('/reconciliation/revenue') ? 'active' : ''}`}
+              >
+                Revenue Reconciliation
+              </Link>
+              <Link 
+                to="/reconciliation/ledger" 
+                className={`dropdown-item ${isActive('/reconciliation/ledger') ? 'active' : ''}`}
+              >
+                Ledger Reconciliation
+              </Link>
+              <Link 
+                to="/reconciliation/bank" 
+                className={`dropdown-item ${isActive('/reconciliation/bank') ? 'active' : ''}`}
+              >
+                Bank Reconciliation
+              </Link>
+            </div>
+          )}
+          
+          <div 
+            className="nav-item with-dropdown" 
             onClick={() => setAdminPortalOpen(!adminPortalOpen)}
             data-testid="nav-admin-portal"
           >
@@ -140,6 +188,10 @@ function AppContent() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/data" element={<DataPage addNotification={addNotification} />} />
           <Route path="/conversational-insights" element={<ConversationalInsights />} />
+          <Route path="/reconciliation/ecommerce" element={<EcommerceReconciliation addNotification={addNotification} />} />
+          <Route path="/reconciliation/revenue" element={<EcommerceReconciliation addNotification={addNotification} reconType="Revenue" />} />
+          <Route path="/reconciliation/ledger" element={<EcommerceReconciliation addNotification={addNotification} reconType="Ledger" />} />
+          <Route path="/reconciliation/bank" element={<EcommerceReconciliation addNotification={addNotification} reconType="Bank" />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>
