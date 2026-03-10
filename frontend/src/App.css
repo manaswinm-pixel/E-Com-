@@ -4119,3 +4119,64 @@
 .modal-next-btn:hover {
   background: #9ca3af;
 }
+
+/* Edit Instructions Modal */
+
+.instructions-modal {
+  max-width: 800px;
+}
+
+.instructions-modal-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.instructions-modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.instructions-modal-content {
+  padding: 24px 32px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.instructions-textarea {
+  width: 100%;
+  min-height: 500px;
+  padding: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  transition: all 0.2s;
+  background: #f9fafb;
+}
+
+.instructions-textarea:focus {
+  border-color: #003DA5;
+  box-shadow: 0 0 0 3px rgba(0, 61, 165, 0.1);
+  background: white;
+}
+
+.modal-save-btn {
+  padding: 10px 24px;
+  background: #d1d5db;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-save-btn:hover {
+  background: #9ca3af;
+}

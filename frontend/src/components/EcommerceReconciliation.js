@@ -8,8 +8,36 @@ const EcommerceReconciliation = ({ addNotification, reconType = 'E-Commerce' }) 
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [showNewReconModal, setShowNewReconModal] = useState(false);
+  const [showEditInstructionsModal, setShowEditInstructionsModal] = useState(false);
   const [modalStep, setModalStep] = useState(1);
   const [partyType, setPartyType] = useState('customer');
+  const [instructionsText, setInstructionsText] = useState(`# Oswaal Client Ledger Reconciliation Instructions
+
+## TRANSACTION CATEGORIES
+
+**Supported Categories**: Invoice, Payment, TDS, Debit Note, Credit Note
+
+**If OUR ledger is Receivables** (Vendor Perspective - asset owed to us):
+- **Debit** (customer owes more): Invoice, Debit Note
+- **Credit** (customer owes less): Payment, TDS, Credit Note
+
+**If OUR ledger is Payables** (Customer Perspective - liability we owe):
+- **Debit** (we owe less): Payment, TDS, Debit Note
+- **Credit** (we owe more): Invoice, Credit Note
+
+**Fallback Rule**: Unclassified transactions → **Other Debit** or **Other Credit** based on polarity
+
+---
+
+## OUR LEDGER KEY COLUMNS
+
+| Column | Purpose |
+|--------|---------|
+| Date | Transaction date |
+| Type | Transaction category |
+| Ref No | Invoice/Payment reference |
+| Amount | Absolute value |
+| Debit/Credit | Polarity indicator |`);
   const [formData, setFormData] = useState({
     name: '',
     startDate: '',
@@ -57,6 +85,23 @@ const EcommerceReconciliation = ({ addNotification, reconType = 'E-Commerce' }) 
   const handleNewRecon = () => {
     setShowNewReconModal(true);
     setModalStep(1);
+  };
+
+  const handleEditInstructions = () => {
+    setShowEditInstructionsModal(true);
+  };
+
+  const handleCloseEditInstructions = () => {
+    setShowEditInstructionsModal(false);
+  };
+
+  const handleSaveInstructions = () => {
+    addNotification({
+      type: 'success',
+      title: 'Instructions Saved',
+      message: 'Party instructions have been updated successfully.',
+    });
+    setShowEditInstructionsModal(false);
   };
 
   const handleCloseModal = () => {
@@ -118,7 +163,7 @@ const EcommerceReconciliation = ({ addNotification, reconType = 'E-Commerce' }) 
             <div className="recon-heading">
               {isPartyDetailView ? `${reconType} Recons` : (activeView === 'parties' ? 'Parties' : `${reconType} Recons`)}
             </div>
-            <button className="recon-edit-instructions-btn" onClick={() => addNotification({ type: 'info', title: 'Edit Instructions', message: 'Opening editor...' })}>
+            <button className="recon-edit-instructions-btn" onClick={handleEditInstructions}>
               <Edit3 size={16} />
               Edit {isPartyDetailView ? 'Parties' : ''} Instructions
             </button>
@@ -335,6 +380,35 @@ const EcommerceReconciliation = ({ addNotification, reconType = 'E-Commerce' }) 
             <div className="modal-footer">
               <button className="modal-cancel-btn" onClick={handleCloseModal}>Cancel</button>
               <button className="modal-next-btn" onClick={handleNextStep}>{modalStep === 1 ? 'Next' : 'Create'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Instructions Modal */}
+      {showEditInstructionsModal && (
+        <div className="modal-overlay">
+          <div className="modal-container instructions-modal">
+            <button className="modal-close" onClick={handleCloseEditInstructions}>
+              <X size={20} />
+            </button>
+            
+            <div className="instructions-modal-header">
+              <h2 className="instructions-modal-title">Edit Parties Instructions</h2>
+            </div>
+
+            <div className="instructions-modal-content">
+              <textarea 
+                className="instructions-textarea"
+                value={instructionsText}
+                onChange={(e) => setInstructionsText(e.target.value)}
+                rows={20}
+              />
+            </div>
+
+            <div className="modal-footer">
+              <button className="modal-cancel-btn" onClick={handleCloseEditInstructions}>Cancel</button>
+              <button className="modal-save-btn" onClick={handleSaveInstructions}>Save</button>
             </div>
           </div>
         </div>
