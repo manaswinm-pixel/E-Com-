@@ -2,7 +2,6 @@ import { useState } from "react";
 import "@/App.css";
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
 import { LayoutDashboard, Database, MessageSquare, Shield, ChevronDown, Settings as SettingsIcon, LogOut, RefreshCw, Users } from 'lucide-react';
-import Dashboard from './components/Dashboard';
 import DataPage from './components/DataPage';
 import ConversationalInsights from './components/ConversationalInsights';
 import Settings from './components/Settings';
@@ -220,7 +219,7 @@ function AppContent() {
       {/* Main Content */}
       <main className={`main-content ${sidebarExpanded ? 'sidebar-expanded' : 'sidebar-collapsed'}`} data-testid="main-content">
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<EcommerceDashboard />} />
           <Route path="/ecommerce-dashboard" element={<EcommerceDashboard />} />
           <Route path="/data" element={<DataPage addNotification={addNotification} />} />
           <Route path="/conversational-insights" element={<ConversationalInsights />} />
