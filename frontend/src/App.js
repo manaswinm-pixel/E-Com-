@@ -11,6 +11,7 @@ import ReconJobDetail from './components/ReconJobDetail';
 import NotificationContainer from './components/Notifications';
 import AdminDashboard from './components/AdminDashboard';
 import UserManagement from './components/UserManagement';
+import EcommerceDashboard from './components/EcommerceDashboard';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -73,9 +74,9 @@ function AppContent() {
         {/* Navigation */}
         <nav className="nav-menu" data-testid="nav-menu">
           <Link
-            to="/"
-            className={`nav-item ${isActive('/') ? 'active' : ''}`}
-            data-testid="nav-dashboard"
+            to="/ecommerce-dashboard"
+            className={`nav-item ${isActive('/ecommerce-dashboard') ? 'active' : ''}`}
+            data-testid="nav-ecommerce-dashboard"
           >
             <LayoutDashboard size={20} />
             {sidebarExpanded && <span>Dashboard</span>}
@@ -120,7 +121,7 @@ function AppContent() {
           </div>
 
           {sidebarExpanded && reconciliationsOpen && (
-            <div className="dropdown-menu" data-testid="reconciliations-dropdown">
+            <div className="nav-dropdown-menu" data-testid="reconciliations-dropdown">
               <Link
                 to="/reconciliation/ecommerce"
                 className={`dropdown-item ${isActive('/reconciliation/ecommerce') ? 'active' : ''}`}
@@ -173,7 +174,7 @@ function AppContent() {
           </div>
 
           {sidebarExpanded && adminPortalOpen && (
-            <div className="dropdown-menu" data-testid="admin-portal-dropdown">
+            <div className="nav-dropdown-menu" data-testid="admin-portal-dropdown">
               <Link
                 to="/admin/dashboard"
                 className={`dropdown-item ${isActive('/admin/dashboard') ? 'active' : ''}`}
@@ -220,6 +221,7 @@ function AppContent() {
       <main className={`main-content ${sidebarExpanded ? 'sidebar-expanded' : 'sidebar-collapsed'}`} data-testid="main-content">
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/ecommerce-dashboard" element={<EcommerceDashboard />} />
           <Route path="/data" element={<DataPage addNotification={addNotification} />} />
           <Route path="/conversational-insights" element={<ConversationalInsights />} />
           <Route path="/reconciliation/ecommerce" element={<EcommerceReconciliation addNotification={addNotification} reconType="E-Commerce" />} />

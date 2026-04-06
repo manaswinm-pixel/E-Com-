@@ -1,0 +1,736 @@
+.ecom-dashboard-wrapper {
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: #1e293b;
+}
+
+/* Header */
+.ecom-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.ecom-logo-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ecom-logo {
+  height: 32px;
+}
+
+.ecom-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.ecom-action-btn {
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #475569;
+}
+
+/* Grids */
+.ecom-grid-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.ecom-grid-row.row-2-col > div {
+  flex: 1;
+}
+
+.ecom-metrics-box {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid #f1f5f9;
+}
+
+.ecom-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.ecom-box-header h3 {
+  font-size: 15px;
+  color: #64748b;
+  font-weight: 500;
+  margin: 0;
+}
+
+.ecom-settings-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 4px;
+}
+
+.ecom-settings-btn:hover {
+  color: #0f172a;
+}
+
+.ecom-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.ecom-metric-card {
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.ecom-metric-title {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.ecom-metric-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.ecom-metric-change {
+  font-size: 12px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.ecom-metric-change.positive { color: #10b981; }
+.ecom-metric-change.negative { color: #ef4444; }
+.ecom-metric-change.neutral { color: #64748b; }
+
+.ecom-metric-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.kpi-line {
+  background: linear-gradient(90deg, #60a5fa, #bfdbfe);
+}
+
+.ops-line {
+  background: linear-gradient(90deg, #34d399, #a7f3d0);
+}
+
+/* Charts */
+.ecom-chart-box {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid #f1f5f9;
+}
+
+.ecom-chart-box h3 {
+  font-size: 15px;
+  color: #475569;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+.ecom-chart-container {
+  width: 100%;
+}
+
+/* Table */
+.ecom-table-box.excel-container {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid #f1f5f9;
+}
+
+.ecom-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.table-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ecom-table-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.small-icon-btn {
+  background: transparent;
+  color: #64748b;
+  border: none;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.small-icon-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.ecom-download-btn.outline-btn {
+  background: white;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.ecom-download-btn.outline-btn:hover {
+  background: #f8fafc;
+}
+
+.table-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ecom-icon-btn {
+  background: transparent;
+  color: #475569;
+  border: none;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.ecom-icon-btn:hover {
+  color: #0f172a;
+}
+
+.ecom-download-btn {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.ecom-download-btn:hover {
+  background: #059669;
+}
+
+.excel-wrapper {
+  overflow: auto;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  max-height: 400px;
+}
+
+.excel-sheet {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: white;
+}
+
+.excel-sheet th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #475569;
+  font-weight: 600;
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  white-space: nowrap;
+}
+
+.th-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.filter-icon {
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.filter-icon:hover {
+  color: #334155;
+}
+
+.excel-sheet td {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.excel-cell-input {
+  width: 100%;
+  padding: 4px;
+  border: 2px solid #2563eb;
+  border-radius: 2px;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+}
+
+.excel-sheet td.num {
+  font-family: Consolas, monospace;
+  text-align: right;
+}
+
+.action-req {
+  color: #b91c1c !important;
+}
+
+.match-status.match {
+  color: #15803d !important;
+}
+
+.match-status.unmatched {
+  color: #b91c1c !important;
+}
+
+.fullscreen-active {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  max-height: 100%;
+  z-index: 1000;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.fullscreen-active .excel-wrapper {
+  flex: 1;
+  overflow: auto;
+  max-height: none;
+}
+
+/* Modal */
+.ecom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+}
+
+.ecom-modal {
+  background: white;
+  border-radius: 12px;
+  width: 500px;
+  max-width: 90vw;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+}
+
+.ecom-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ecom-modal-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: #0f172a;
+}
+
+.manual-add-modal {
+  width: 800px !important;
+}
+
+.form-row-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.grid-col label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #475569;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.ecom-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.ecom-modal-info {
+  background: #eff6ff;
+  color: #1e3a8a;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.metric-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.metric-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.metric-info strong {
+  display: block;
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.metric-val {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 4px;
+  display: block;
+}
+
+.metric-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-label {
+  font-size: 13px;
+  color: #64748b;
+  width: 50px;
+}
+
+/* Toggle Switch CSS */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #3b82f6;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.slider.round {
+  border-radius: 24px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.show-add-form-btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  background: white;
+  border: 1px dashed #cbd5e1;
+  color: #3b82f6;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.show-add-form-btn:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.add-metric-form {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.add-metric-form h4 {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Hover Effects */
+.card-hoverable {
+  transition: all 0.3s ease;
+}
+
+.card-hoverable:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08); /* slight shadow light */
+  transform: translateY(-2px);
+}
+
+/* Dropdown Menu CSS */
+.dropdown-container {
+  position: relative;
+}
+
+.ecom-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+  min-width: 240px;
+  z-index: 50;
+  padding: 8px 0;
+  left: 0;
+}
+
+.ecom-dropdown-menu.align-right {
+  left: auto;
+  right: 0;
+}
+
+.ecom-dropdown-item {
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ecom-dropdown-item:hover, .ecom-dropdown-item.active {
+  background: #f8fafc;
+  color: #0f172a;
+  font-weight: 500;
+}
+
+.ecom-custom-date {
+  padding: 12px 16px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.ecom-custom-date input.date-input {
+  padding: 6px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ecom-custom-date button {
+  background: #0f172a;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+.cancel-add-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 8px 16px;
+}
+
+.save-add-btn {
+  background: #0f172a;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.ecom-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.selection-count {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.ecom-save-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.ecom-save-btn:hover {
+  background: #2563eb;
+}
