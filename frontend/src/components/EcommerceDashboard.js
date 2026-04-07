@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { 
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, 
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer 
 } from 'recharts';
-import { Settings, X, Plus, ChevronDown, Download, AlertCircle, Info, Filter, Maximize, Minimize } from 'lucide-react';
+import { Settings, X, Plus, ChevronDown, Download, AlertCircle, Info, Filter, Maximize, Minimize, Bell } from 'lucide-react';
 import { 
   salesData, dailySalesChartData, paymentModeData, 
   rtoExchangeTrendData, revenueSourceData, formatIndianNumber 
@@ -115,6 +115,12 @@ const EcommerceDashboard = () => {
   const [filterDropdownOpen, setFilterDropdownOpen] = useState(false);
   const [globalFilter, setGlobalFilter] = useState('Today');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(true);
+  const [downloadMenuOpen, setDownloadMenuOpen] = useState(false);
+  const [downloadRange, setDownloadRange] = useState('Today');
+  const [downloadCustomFrom, setDownloadCustomFrom] = useState('');
+  const [downloadCustomTo, setDownloadCustomTo] = useState('');
   
   const [newRow, setNewRow] = useState({ 
     date: '', type: '', ref: '', amount: '', cpAmount: '', diff: '', 
@@ -271,9 +277,162 @@ const EcommerceDashboard = () => {
     diff: row.diff !== '' ? Math.round(row.diff * filterMultiplier) : '' 
   }));
 
+  const parseDdMmYyyy = (str) => {
+    if (!str || typeof str !== 'string') return null;
+    const m = str.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+    if (!m) return null;
+    const dd = Number(m[1]);
+    const mm = Number(m[2]);
+    const yyyy = Number(m[3]);
+    const d = new Date(yyyy, mm - 1, dd);
+    return Number.isNaN(d.getTime()) ? null : d;
+  };
+
+  const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const isSameDay = (a, b) =>
+    a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+
+  const filterRowsByDownloadRange = (rows) => {
+    const now = new Date();
+    const today = startOfDay(now);
+    const getRowDate = (row) => parseDdMmYyyy(row?.date);
+
+    if (downloadRange === 'Today') {
+      return rows.filter((r) => {
+        const d = getRowDate(r);
+        return d ? isSameDay(startOfDay(d), today) : true;
+      });
+    }
+
+    if (downloadRange === 'Last week' || downloadRange === 'Last Month') {
+      const days = downloadRange === 'Last week' ? 7 : 30;
+      const from = new Date(today);
+      from.setDate(from.getDate() - (days - 1));
+      return rows.filter((r) => {
+        const d = getRowDate(r);
+        if (!d) return true;
+        const sd = startOfDay(d);
+        return sd >= from && sd <= today;
+      });
+    }
+
+    if (downloadRange === 'Custom') {
+      if (!downloadCustomFrom || !downloadCustomTo) return rows;
+      const from = startOfDay(new Date(downloadCustomFrom));
+      const to = startOfDay(new Date(downloadCustomTo));
+      if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) return rows;
+      const lo = from <= to ? from : to;
+      const hi = from <= to ? to : from;
+      return rows.filter((r) => {
+        const d = getRowDate(r);
+        if (!d) return true;
+        const sd = startOfDay(d);
+        return sd >= lo && sd <= hi;
+      });
+    }
+
+    return rows;
+  };
+
+  const downloadRowsAsCsv = (rows, filename) => {
+    const headers = [
+      'Date',
+      'Transaction Type',
+      'Reference Number',
+      'Amount',
+      'Counterparty Amount',
+      'Amount Difference',
+      'Counterparty Reference Number',
+      'Counterparty Transaction Type',
+      'Counterparty Date',
+      'Category',
+      'Action Required',
+      'Match Status',
+    ];
+
+    const esc = (v) => {
+      const s = String(v ?? '');
+      if (/[,"\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+      return s;
+    };
+
+    const lines = [
+      headers.join(','),
+      ...rows.map((r) =>
+        [
+          r.date,
+          r.type,
+          r.ref,
+          r.amount,
+          r.cpAmount,
+          r.diff,
+          r.cpRef,
+          r.cpType,
+          r.cpDate,
+          r.category,
+          r.action,
+          r.status,
+        ]
+          .map(esc)
+          .join(',')
+      ),
+    ];
+
+    const csvContent = lines.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadExcel = () => {
+    const rows = filterRowsByDownloadRange(scaledTableRows);
+    const safeRange = String(downloadRange).toLowerCase().replace(/\s+/g, '-');
+    downloadRowsAsCsv(rows, `detailed-audit-${safeRange}.csv`);
+    setDownloadMenuOpen(false);
+  };
+
   const LOGO_URL = "https://customer-assets.emergentagent.com/job_data-convo-poc/artifacts/rmuu7ljf_OneCap%20logo%20Blue.svg";
   const reconTypes = ['Ledger Reconciliation', 'Bank Reconciliation', 'PG Reconciliation', 'Marketplace Reconciliation'];
   const filterOptions = ['Today', 'Last week', 'Last quarter', 'Custom'];
+  const downloadOptions = ['Today', 'Last week', 'Last Month', 'Custom'];
+  
+  const dashboardNotifications = useMemo(() => {
+    const formatShortDate = (date) =>
+      date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    const items = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const label = i === 0 ? 'Today' : i === 1 ? 'Yesterday' : `${i} days ago`;
+
+      const status = i === 0 || i === 1 || i === 3 ? 'fetched' : 'not_fetched';
+      const title = status === 'fetched' ? 'Data fetched' : 'Data not fetched';
+
+      items.push({
+        id: `data_${i}`,
+        title,
+        subtitle: `${label} • ${formatShortDate(date)}`,
+        status,
+      });
+    }
+
+    // Keep total at 7, but include a "sync completed" type message.
+    items[2] = {
+      id: 'sync_complete',
+      title: 'Data Sync fetched the data',
+      subtitle: `System • ${formatShortDate(new Date())}`,
+      status: 'info',
+    };
+
+    return items;
+  }, []);
 
   return (
     <div className="ecom-dashboard-wrapper">
@@ -293,10 +452,62 @@ const EcommerceDashboard = () => {
           )}
         </div>
         <div className="ecom-header-actions dropdown-container">
+          <button
+            className="ecom-action-btn ecom-notification-btn"
+            onClick={() => {
+              setNotificationsOpen((prev) => {
+                const next = !prev;
+                if (next) setHasUnreadNotifications(false);
+                return next;
+              });
+            }}
+            aria-label="Notifications"
+            title="Notifications"
+            type="button"
+            data-testid="ecom-notifications-button"
+          >
+            <span className="ecom-notification-icon">
+              <Bell size={16} />
+              {hasUnreadNotifications && <span className="ecom-notification-dot" />}
+            </span>
+          </button>
+          {notificationsOpen && (
+            <div
+              className="ecom-notification-popover align-right"
+              role="dialog"
+              aria-label="Notifications panel"
+              data-testid="ecom-notifications-popover"
+            >
+              <div className="ecom-notification-header">
+                <div className="ecom-notification-title">Notifications</div>
+                <button
+                  className="ecom-notification-close"
+                  onClick={() => setNotificationsOpen(false)}
+                  type="button"
+                  aria-label="Close notifications"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+              <div className="ecom-notification-list">
+                {dashboardNotifications.map((n) => (
+                  <div key={n.id} className="ecom-notification-item">
+                    <div className="ecom-notification-text">
+                      <div className="ecom-notification-item-title">{n.title}</div>
+                      <div className="ecom-notification-item-subtitle">{n.subtitle}</div>
+                    </div>
+                    <span className={`ecom-notification-badge ${n.status}`}>
+                      {n.status === 'fetched' ? 'Fetched' : n.status === 'not_fetched' ? 'Missing' : 'Info'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           <button className="ecom-action-btn period-select" onClick={() => setFilterDropdownOpen(!filterDropdownOpen)}>
             <Filter size={16} /> Filter: {globalFilter} <ChevronDown size={16} />
           </button>
-          {filterDropdownOpen && (
+          {!isFullScreenTable && filterDropdownOpen && (
             <div className="ecom-dropdown-menu align-right">
               {filterOptions.map(opt => (
                 <div key={opt} className={`ecom-dropdown-item ${globalFilter === opt ? 'active' : ''}`} onClick={() => {
@@ -455,10 +666,96 @@ const EcommerceDashboard = () => {
               <Info size={14} />
             </button>
           </div>
-          <div className="table-header-right">
-            <button className="ecom-download-btn outline-btn" style={{ background: '#001b69', color: 'white' }}>
+          <div className="table-header-right dropdown-container">
+            {isFullScreenTable && (
+              <>
+                <button
+                  className="ecom-action-btn period-select"
+                  onClick={() => setFilterDropdownOpen(!filterDropdownOpen)}
+                  type="button"
+                >
+                  <Filter size={16} /> Filter: {globalFilter} <ChevronDown size={16} />
+                </button>
+                {filterDropdownOpen && (
+                  <div className="ecom-dropdown-menu align-right">
+                    {filterOptions.map(opt => (
+                      <div key={opt} className={`ecom-dropdown-item ${globalFilter === opt ? 'active' : ''}`} onClick={() => {
+                        setGlobalFilter(opt);
+                        if (opt !== 'Custom') {
+                          setFilterDropdownOpen(false);
+                          setShowDatePicker(false);
+                        } else {
+                          setShowDatePicker(true);
+                        }
+                      }}>
+                        {opt}
+                      </div>
+                    ))}
+                    {showDatePicker && (
+                      <div className="ecom-custom-date">
+                        <label style={{fontSize: '12px', fontWeight: 'bold'}}>From:</label>
+                        <input type="date" className="date-input" />
+                        <label style={{fontSize: '12px', fontWeight: 'bold'}}>To:</label>
+                        <input type="date" className="date-input" />
+                        <button onClick={() => setFilterDropdownOpen(false)}>Apply Filter</button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+            <button
+              className="ecom-download-btn outline-btn"
+              style={{ background: '#001b69', color: 'white' }}
+              type="button"
+              onClick={() => setDownloadMenuOpen((v) => !v)}
+              data-testid="detailed-audit-download-button"
+            >
               <Download size={14} /> Download Excel
             </button>
+            {downloadMenuOpen && (
+              <div className="ecom-dropdown-menu align-right ecom-download-menu" data-testid="detailed-audit-download-menu">
+                {downloadOptions.map((opt) => (
+                  <div
+                    key={opt}
+                    className={`ecom-dropdown-item ${downloadRange === opt ? 'active' : ''}`}
+                    onClick={() => {
+                      setDownloadRange(opt);
+                    }}
+                  >
+                    {opt}
+                  </div>
+                ))}
+                {downloadRange === 'Custom' && (
+                  <div className="ecom-custom-date">
+                    <label style={{fontSize: '12px', fontWeight: 'bold'}}>From:</label>
+                    <input
+                      type="date"
+                      className="date-input"
+                      value={downloadCustomFrom}
+                      onChange={(e) => setDownloadCustomFrom(e.target.value)}
+                    />
+                    <label style={{fontSize: '12px', fontWeight: 'bold'}}>To:</label>
+                    <input
+                      type="date"
+                      className="date-input"
+                      value={downloadCustomTo}
+                      onChange={(e) => setDownloadCustomTo(e.target.value)}
+                    />
+                  </div>
+                )}
+                <div className="ecom-download-actions">
+                  <button
+                    className="ecom-download-apply"
+                    type="button"
+                    onClick={handleDownloadExcel}
+                    disabled={downloadRange === 'Custom' && (!downloadCustomFrom || !downloadCustomTo)}
+                  >
+                    Download
+                  </button>
+                </div>
+              </div>
+            )}
             <button className="ecom-icon-btn" onClick={() => setIsFullScreenTable(!isFullScreenTable)}>
               {isFullScreenTable ? <Minimize size={18} /> : <Maximize size={18} />}
             </button>

@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Download, Play, RefreshCw, Check, Hourglass } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Download, Play, RefreshCw, Check, Hourglass, Plus } from 'lucide-react';
 
 const DataPage = ({ addNotification }) => {
   const [syncing, setSyncing] = useState(false);
+  const navigate = useNavigate();
 
   // Generate dates for the last 7 days
   const generateDates = () => {
@@ -121,6 +123,10 @@ const DataPage = ({ addNotification }) => {
     }, 2000);
   };
 
+  const handleNewRecon = () => {
+    navigate('/reconciliation/ecommerce?newRecon=1');
+  };
+
   const handleDownload = (date) => {
     addNotification({
       type: 'info',
@@ -192,15 +198,25 @@ const DataPage = ({ addNotification }) => {
     <div className="data-page-content" data-testid="data-page">
       <header className="dashboard-header">
         <h1 className="dashboard-title">Data Sync Management</h1>
-        <button
-          className="sync-button"
-          onClick={handleDailySync}
-          disabled={syncing}
-          data-testid="daily-sync-button"
-        >
-          <RefreshCw size={18} className={syncing ? 'spinning' : ''} />
-          {syncing ? 'Syncing...' : 'Daily Sync'}
-        </button>
+        <div className="data-page-header-actions">
+          <button
+            className="sync-button"
+            onClick={handleDailySync}
+            disabled={syncing}
+            data-testid="daily-sync-button"
+          >
+            <RefreshCw size={18} className={syncing ? 'spinning' : ''} />
+            {syncing ? 'Syncing...' : 'Daily Sync'}
+          </button>
+          <button
+            className="sync-button new-recon-button"
+            onClick={handleNewRecon}
+            data-testid="data-new-recon-button"
+          >
+            <Plus size={18} />
+            New Recon
+          </button>
+        </div>
       </header>
 
       <div className="data-sync-table-container flipped-layout">

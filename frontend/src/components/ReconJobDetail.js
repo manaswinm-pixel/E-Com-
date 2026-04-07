@@ -24,19 +24,34 @@ const ReconJobDetail = ({ addNotification }) => {
     { particular: 'Closing Balance', inYours: '4,69,040.17', inCounterparty: '52,960.60', difference: '4,16,079.57' },
   ];
 
-  // Mock detailed transaction data
-  const transactionData = [
-    { date: '18-04-2024', type: 'Invoice', refNum: 'WY/23-24/M3716, M3716', amount: '55640.54', counter: '0' },
-    { date: '18-04-2024', type: 'Invoice', refNum: 'WY/23-24/M3779, M3779', amount: '292388.87', counter: '292389' },
-    { date: '30-04-2024', type: 'TDS', refNum: '', amount: '0', counter: '24779' },
-    { date: '08-05-2024', type: 'Payment', refNum: 'WY/23-24/M3405, M3405, WY/23-24/M3475, M3475, WY/23-24/M3...', amount: '267610', counter: '267610' },
-    { date: '17-05-2024', type: 'Invoice', refNum: 'WY/24-25/M0166, M0166', amount: '61384.19', counter: '0' },
-    { date: '17-05-2024', type: 'Invoice', refNum: 'WY/24-25/M0243, M0243', amount: '297130.25', counter: '297130' },
-    { date: '22-05-2024', type: 'TDS', refNum: '', amount: '0', counter: '25181' },
-    { date: '29-05-2024', type: 'Payment', refNum: 'WY/23-24/M3716, M3716, WY/23-24/M3779, M3779, WY/(24-25)M0...', amount: '271949', counter: '271949' },
-    { date: '22-06-2024', type: 'Invoice', refNum: 'WY/24-25/M0444, M0444', amount: '62968.34', counter: '62968' },
-    { date: '22-06-2024', type: 'Invoice', refNum: 'WY/24-25/M0385, M0385', amount: '336776.87', counter: '336777' },
-  ];
+  const generateLedgerRows = () => {
+    const types = ['Invoice', 'Payment', 'Credit Note', 'Debit Note', 'TDS'];
+    const rows = [];
+    for (let i = 0; i < 80; i++) {
+      const date = new Date(2024, 3, 1);
+      date.setDate(date.getDate() + (i % 90));
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const yyyy = date.getFullYear();
+
+      const type = types[i % types.length];
+      const refNum = type === 'TDS' ? '' : `WY/${String(23 + (i % 2)).padStart(2, '0')}-${String(24 + (i % 2)).padStart(2, '0')}/M${String(1000 + i)}`;
+      const amount = ((i * 1379) % 500000) + 250;
+      const counter = type === 'Invoice' || type === 'Payment' ? (amount + ((i % 3) - 1) * 25) : 0;
+
+      rows.push({
+        date: `${dd}-${mm}-${yyyy}`,
+        type,
+        refNum,
+        amount: String(amount),
+        counter: String(counter),
+      });
+    }
+    return rows;
+  };
+
+  // Mock detailed transaction data (larger list, scrollable like dashboard excel)
+  const transactionData = generateLedgerRows();
 
   const handleQuickRetry = () => {
     setShowQuickRetryModal(true);
